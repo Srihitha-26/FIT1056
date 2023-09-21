@@ -30,7 +30,9 @@ class Game:
         for i in range(len(questions)):
             while True:
                 print(questions[i])
-                givenCode = initialCode[i].split(';')
+                givenCode = initialCodes[i].strip().split(';')
+                for k in range(len(givenCode)):
+                    givenCode[k] = "\n".join(givenCode[k].split('~~'))
                 print('Initial Code:\n' + givenCode[0])
                 print("Type in your code to complete the question.\nType in (without quotes):\n'--delete--' to remove the last line\n'--clear--' to clear all lines\n'--finish--' to submit the code\n'--stop--' to see the answer\n")
                 userInputs = []
@@ -61,7 +63,7 @@ class Game:
                 
                 if submitted:
                     passed = True
-                    for j in givenCode:
+                    for j in range(len(givenCode)):
                         try:
                             codeList = [givenCode] + userInputs
                             code = "\n".join(codeList)
@@ -78,7 +80,7 @@ class Game:
                         break
                 
                 else:
-                    print("The coded answer is:\n" + codeAnswers[i])
+                    print("The coded answer is:\n" + "\n".join(codeAnswers[i].split("~~")))
                     break
 
         readFile.close()
@@ -111,12 +113,12 @@ class Game:
                     print("------------------------------Restart Code From Here------------------------------\n")
 
                 elif eduInput == '--next--':
-                    testCases.append("\n".join(eduInputs))
+                    testCases.append("~~".join(eduInputs))
                     eduInputs = []
                     print("------------------------------Code Next Test Case From Here------------------------------\n")
 
                 elif eduInput == '--finish--':
-                    testCases.append("\n".join(eduInputs))
+                    testCases.append("~~".join(eduInputs))
                     break
 
                 else:
@@ -124,7 +126,7 @@ class Game:
 
         ansInput = []
         for i in range(len(testCases)):
-            ansInput.append(input("Type in the returned item for this test case:\n " + testCases[i]))
+            ansInput.append(input("Type in the returned item for this test case:\n " + "\n".join(testCases[i]).split("~~")))
 
         codedAns = []
         print("Type in your code to complete the initial code(s).\nType in (without quotes):\n'--delete--' to remove the last line\n'--clear--' to clear all lines\n'--finish--' to set the coded answer\n")
@@ -149,7 +151,7 @@ class Game:
                     codedAns.append(codedInput)
 
         writeFile = open(self.quizFile, "a", encoding="utf8")
-        writeLine = [qnsInput, ";".join(testCases), ";".join(ansInput), "\n".join(codedAns)]
+        writeLine = [qnsInput, ";".join(testCases), ";".join(ansInput), "~~".join(codedAns)]
         writeFile.write("\n" + ",".join(writeLine))
         writeFile.close()
         print("Question added, returning to menu.")
@@ -172,7 +174,8 @@ class Game:
             codeAnswers.append[codeAnswer]
 
         for i in range(len(questions)):
-            print(f"[{i+1}]\nQuestion: {questions[i]}\nAnswers: {codeAnswer[i]}\n\n")
+            codedAns = '\n'.join(codeAnswer[i].split('~~'))
+            print(f"[{i+1}]\nQuestion: {questions[i]}\nAnswer: {codedAns}\n\n")
         
         while True:
             try:
