@@ -31,6 +31,7 @@ class Game:
                         try:
                             userInputs.pop()
                             print("\033[A\033[A") # Clears a line
+                            print("\033[A\033[A")
                         except IndexError:
                             print("No previous code has been typed.")
 
@@ -123,6 +124,7 @@ class Game:
                     try:
                         codedAns.pop()
                         print("\033[A\033[A") # Clears a line
+                        print("\033[A\033[A")
                     except IndexError:
                         print("No previous code has been typed.")
 

@@ -88,7 +88,7 @@ class Login:
         return newUser
 
         
-    def login_main(self):
+    def login(self):
         devFile = open("./database/devs.txt", "r", encoding="utf8")
         lines = list(devFile)
         devUsernames = []
