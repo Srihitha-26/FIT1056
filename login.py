@@ -9,10 +9,17 @@ Group: MA_FRI_1600_G2
 from menu import Menu
 from users import *
 from game import *
+import os
 
 class Login:
     menu = Menu()
     game = Game()
+    baseFile = os.path.dirname(os.path.realpath('__file__'))
+    
+    devsData = os.path.join(baseFile,'database\devs.txt')
+    invsData = os.path.join(baseFile,'database\invs.txt')
+    edusData = os.path.join(baseFile,'database\edus.txt')
+    stusData = os.path.join(baseFile,'database\stus.txt')
 
     def auth_account(self,usernameInput: str, passwordInput: str, accounts: list[str]):
         result = False
@@ -24,8 +31,7 @@ class Login:
                 break
         return result
 
-    def create_account(accountType: str, allIDs: list[str], allUsernames: list[str], **kwargs) -> User:
-        # TODO: Add accounts into files here.
+    def create_account(self,accountType: str, allIDs: list[str], allUsernames: list[str], **kwargs) -> User:
         newUser = User("Placeholder","Placeholder","Placeholder@email.nul")
         while True:
             usernameInput = input("\nPlease enter a username: ")
@@ -50,6 +56,9 @@ class Login:
                 while True:
                     sharesInput = input("\nPlease enter the current amount of shares that is held (%): ")
                     if newUser.set_shares(sharesInput):
+                        with open(self.invsData, "a") as file:
+                            file.write(f"{newUser.get_username()},{newUser.get_password()},{newUser.get_email()},{newUser.get_id()},{newUser.get_shares()}")
+                            file.close()
                         break
 
             case "Educator":
@@ -57,6 +66,9 @@ class Login:
                 while True:
                     schoolInput = input("\nPlease enter the name of the school that you are teaching at: ")
                     if newUser.set_school(schoolInput):
+                        with open(self.edusData, "a") as file:
+                            file.write(f"{newUser.get_username()},{newUser.get_password()},{newUser.get_email()},{newUser.get_id()},{newUser.get_school()}")
+                            file.close()
                         break
 
             case "Student":
@@ -77,16 +89,22 @@ class Login:
                             if found:
                                 break
                             else:
-                                print("Educator not found.")
+                                print("Educator username not found in database.")
 
                         
                         while True:
                             schoolInput = input("\nPlease enter the name of the school that you are learning at: ")
                             if newUser.set_school(schoolInput):
+                                with open(self.stusData, "a") as file:
+                                    file.write(f"{newUser.get_username()},{newUser.get_password()},{newUser.get_email()},{newUser.get_id()},{newUser.get_school()},{newUser.get_educator().get_username()}")
+                                    file.close()
                                 break
                         break
 
                     elif educationInput == "N":
+                        with open(self.stusData, "a") as file:
+                            file.write(f"{newUser.get_username()},{newUser.get_password()},{newUser.get_email()},{newUser.get_id()},None,None")
+                            file.close()
                         break
 
                     else:
@@ -99,28 +117,30 @@ class Login:
         return newUser
     
 
-    def delete_account(user: User):
+    def delete_account(self,user: User):
         userType = user.get_type()
 
         match userType:
             case "DEV":
-                userFile = "./database/devs.txt"
+                userFile = self.devsData
             case "INV":
-                userFile = "./database/invs.txt"
+                userFile = self.invsData
             case "EDU":
-                userFile = "./database/edus.txt"
+                userFile = self.edusData
             case "STU":
-                userFile = "./database/stus.txt"
+                userFile = self.stusData
 
         # Read the existing user data from the file
         with open(userFile, "r") as file:
             lines = file.readlines()
+            file.close()
 
         # Create a new list of lines without the user's data
         new_lines = []
         user_found = False
         for line in lines:
-            existing_username, _ = line.strip().split(",")
+            allData = line.strip().split(",")
+            existing_username = allData[0]
             if existing_username != user.get_username():
                 new_lines.append(line)
             else:
@@ -130,13 +150,14 @@ class Login:
         if user_found:
             with open(userFile, "w") as file:
                 file.writelines(new_lines)
+                file.close()
             return True  # Account successfully deleted
         else:
             return False  # User not found
 
 
-    def login(self):
-        devFile = open("./database/devs.txt", "r", encoding="utf8")
+    def login_main(self):
+        devFile = open(self.devsData, "r", encoding="utf8")
         lines = list(devFile)
         devFile.close()
         devUsernames = []
@@ -159,8 +180,9 @@ class Login:
             devStartTimes.append(startTime)
             devEndTimes.append(endTime)
 
-        invFile = open("./database/invs.txt", "r", encoding="utf8")
+        invFile = open(self.invsData, "r", encoding="utf8")
         lines = list(invFile)
+        invFile.close()
         invUsernames = []
         invPasswords = []
         invAccounts = []
@@ -179,8 +201,9 @@ class Login:
             invIDs.append(invID)
             invShares.append(shares)
 
-        eduFile = open("./database/edus.txt", "r", encoding="utf8")
+        eduFile = open(self.edusData, "r", encoding="utf8")
         lines = list(eduFile)
+        eduFile.close()
         eduUsernames = []
         eduPasswords = []
         eduAccounts = []
@@ -200,8 +223,9 @@ class Login:
             eduIDs.append(eduID)
             eduSchools.append(school)
 
-        stuFile = open("./database/stus.txt", "r", encoding="utf8")
+        stuFile = open(self.stusData, "r", encoding="utf8")
         lines = list(stuFile)
+        stuFile.close()
         stuUsernames = []
         stuPasswords = []
         stuAccounts = []
@@ -233,17 +257,24 @@ class Login:
                     usernameInput = input("\nPlease enter your username: ")
                     passwordInput = input("\nPlease enter your password: ")
                     if self.auth_account(usernameInput,passwordInput,devAccounts):
-                        self.menu.set_user(Developer(devUsernames[self.accountIndex], devPasswords[self.accountIndex], devEmails[self.accountIndex], [devStartTimes[self.accountIndex],devEndTimes[self.accountIndex]]))
+                        self.menu.set_user(Developer(devUsernames[self.accountIndex], devPasswords[self.accountIndex], devEmails[self.accountIndex], [devStartTimes[self.accountIndex],devEndTimes[self.accountIndex]], userID=devIDs[self.accountIndex]))
                     elif self.auth_account(usernameInput,passwordInput,invAccounts):
-                        self.menu.set_user(Investor(invUsernames[self.accountIndex], invPasswords[self.accountIndex], invEmails[self.accountIndex], invShares[self.accountIndex]))
+                        self.menu.set_user(Investor(invUsernames[self.accountIndex], invPasswords[self.accountIndex], invEmails[self.accountIndex], invShares[self.accountIndex], userID=invIDs[self.accountIndex]))
                     elif self.auth_account(usernameInput,passwordInput,eduAccounts):
-                        self.menu.set_user(Educator(eduUsernames[self.accountIndex], eduPasswords[self.accountIndex], eduEmails[self.accountIndex], eduSchools[self.accountIndex]))
+                        self.menu.set_user(Educator(eduUsernames[self.accountIndex], eduPasswords[self.accountIndex], eduEmails[self.accountIndex], eduSchools[self.accountIndex], userID=eduIDs[self.accountIndex]))
                     elif self.auth_account(usernameInput,passwordInput,stuAccounts):
+                        if stuSchools[self.accountIndex] == 'None':
+                            studentSchool = None
+                        else:
+                            studentSchool = stuSchools[self.accountIndex]
+                        studentEducator = None
                         for i in range(len(eduUsernames)):
                             if stuEducator[self.accountIndex] == eduUsernames[i]:
-                                studentEducator = Educator(eduUsernames[i], eduPasswords[i], eduEmails[i], eduSchools[i])
-                                break
-                        self.menu.set_user(Student(stuUsernames[self.accountIndex], stuPasswords[self.accountIndex], stuEmails[self.accountIndex], stuSchools[self.accountIndex], studentEducator))
+                                studentEducator = Educator(eduUsernames[i], eduPasswords[i], eduEmails[i], eduSchools[i], userID=eduIDs[i])
+                                break     
+                        self.menu.set_user(Student(stuUsernames[self.accountIndex], stuPasswords[self.accountIndex], stuEmails[self.accountIndex], studentSchool, studentEducator, userID=stuIDs[self.accountIndex]))
+                    else:
+                        print("Invalid account username or password, returning to menu.")
 
                 case "Create Account":
                     typeOption = self.menu.option_select(self.menu.create_account_type_menu(User.availableTypes))
@@ -359,6 +390,38 @@ class Login:
                                 print("Re-entered password does not match the new password.")
                 
                 case "Log Out":
+                    print("Saving data.")
+                    userType = self.menu.get_user().get_type()
+
+                    match userType:
+                        case "DEV":
+                            userFile = self.devsData
+                        case "INV":
+                            userFile = self.invsData
+                        case "EDU":
+                            userFile = self.edusData
+                        case "STU":
+                            userFile = self.stusData
+
+                    # Read the existing user data from the file
+                    with open(userFile, "r") as file:
+                        lines = file.readlines()
+                        file.close()
+
+                    # Create a new list of lines with the updated user's data
+                    new_lines = []
+                    for line in lines:
+                        allData = line.strip().split(",")
+                        existing_username = allData[0]
+                        if existing_username != self.menu.get_user().get_username():
+                            new_lines.append(line)
+                        else:
+                            new_lines.append(self.menu.get_user().to_database())
+                    
+                    with open(userFile, "w") as file:
+                        file.writelines(new_lines)
+                        file.close()
+
                     print("Logging out.")
                     self.menu.set_user(None)
 

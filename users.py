@@ -13,10 +13,13 @@ class User():
     typeList = ["DEV", "INV", "EDU", "STU"]
     availableTypes = ["Investor", "Educator", "Student"]
 
-    def __init__(self, username: str, password: str, email: str):
+    def __init__(self, username: str, password: str, email: str, **kwargs):
         self.set_username(username)
-        self.set_password(password)
+        self.password = password
         self.set_email(email)
+        if not self.set_id(kwargs['userID']):
+            self.generate_id()
+
         self.userType: str
         
 
@@ -41,12 +44,18 @@ class User():
         min_length = 8
         have_spl_char = re.search(r'[!@#$%&*~]', newPassword) is not None
 
-        if len(newPassword) < min_length:
-            return False, "Password must be at least 8 characters long."
+        if newPassword == None:
+            print("Password is invalid.")
+            return False
+        elif len(newPassword) < min_length:
+            print("Password must be at least 8 characters long.")
+            return False
         elif not have_spl_char:
-            return False, "Password must contain at least one special character."
+            print("Password must contain at least one special character.")
+            return False
         else:
-            return True, "Your password has been set"
+            self.password = newPassword
+            return True
         
     def set_email(self, newEmail: str) -> bool:
         if newEmail == None:
@@ -56,6 +65,7 @@ class User():
         else:
             self.email = newEmail
             return True
+        
     def set_type(self, newType: str) -> bool:
         if newType == None:
             return False
@@ -63,6 +73,13 @@ class User():
             return False
         else:
             self.userType = newType
+            return True
+        
+    def set_id(self, newID: str) -> bool:
+        if newID == None:
+            return False
+        else:
+            self.userID = newID
             return True
 
     def generate_id(self,idList: list[str]) -> None:
@@ -96,29 +113,16 @@ class User():
         ret += f"\nUser ID: {self.userID}"
         return ret
 
-class Investor(User):
-    def __init__(self, username: str, password: str, email: str, shares: float):
-        super().__init__(username, password, email)
-        self.set_shares(shares)
-        self.set_type("INV")
-
-    def set_shares(self, newShares: float) -> bool:
-        if newShares < 0 or newShares > 100:
-            print("Shares must be a number between 0 - 100")
-            return False
-        else:
-            self.shares = newShares
-            return True
-    
-    def __str__(self) -> str:
-        ret = super.__str__()
-        ret += f"\nShares: {self.shares}%"
-        return ret
+    def to_database(self) -> str:
+        return f"{self.get_username()},{self.get_password()},{self.get_email()},{self.get_type()},{self.get_id()}"
 
 
 class Developer(User):
-    def __init__(self, username: str, password: str, email: str, workingTimes: list[str]):
-        super().__init__(username, password, email)
+    def __init__(self, username: str, password: str, email: str, workingTimes: list[str], **kwargs):
+        if 'userID' in kwargs:
+            super().__init__(username, password, email, userID=kwargs['userID'])
+        else:
+            super().__init__(username, password, email)
         self.set_times(workingTimes)
         self.set_type("DEV")
 
@@ -140,17 +144,53 @@ class Developer(User):
         self.workingTimes = newTimes
         return True
     
-    def get_times(self):
+    def get_times(self) -> list[str]:
         return self.workingTimes
 
     def __str__(self) -> str:
-        ret = super.__str__()
-        ret += f"\n{self.workingTimes[0]} - {self.workingTimes[1]}"
+        ret = super().__str__()
+        ret += f"\nWorking times: {self.workingTimes[0]} - {self.workingTimes[1]}\n"
         return ret
+    
+    def to_database(self) -> str:
+        return f"{super().to_database()},{self.get_times()[0]},{self.get_times()[1]}\n"
+    
+
+class Investor(User):
+    def __init__(self, username: str, password: str, email: str, shares: float, **kwargs):
+        if 'userID' in kwargs:
+            super().__init__(username, password, email, userID=kwargs['userID'])
+        else:
+            super().__init__(username, password, email)
+        self.set_shares(shares)
+        self.set_type("INV")
+
+    def set_shares(self, newShares: float) -> bool:
+        if newShares < 0 or newShares > 100:
+            print("Shares must be a number between 0 - 100")
+            return False
+        else:
+            self.shares = newShares
+            return True
+        
+    def get_shares(self) -> float:
+        return self.shares
+    
+    def __str__(self) -> str:
+        ret = super().__str__()
+        ret += f"\nShares: {self.shares}%\n"
+        return ret
+    
+    def to_database(self) -> str:
+        return f"{super().to_database()},{self.get_shares()}\n"
+
 
 class Educator(User):
-    def __init__(self, username: str, password: str, email: str, schoolAssociation: str):
-        super().__init__(username, password, email)
+    def __init__(self, username: str, password: str, email: str, schoolAssociation: str, **kwargs):
+        if 'userID' in kwargs:
+            super().__init__(username, password, email, userID=kwargs['userID'])
+        else:
+            super().__init__(username, password, email)
         self.set_school(schoolAssociation)
         self.set_type("EDU")
     
@@ -162,25 +202,32 @@ class Educator(User):
             self.schoolAssociation = newSchool
             return True
         
+    def get_school(self) -> str:
+        return self.schoolAssociation
+        
     def __str__(self) -> str:
-        ret = super.__str__()
-        ret += f"\nSchool Associated: {self.schoolAssociation}"
+        ret = super().__str__()
+        ret += f"\nSchool Associated: {self.schoolAssociation}\n"
         return ret
+    
+    def to_database(self) -> str:
+        return f"{super().to_database()},{self.get_school()}\n"
 
 
 class Student(User):
-    def __init__(self, username: str, password: str, email: str, **kwargs):
-        super().__init__(username, password, email)
+    def __init__(self, username: str, password: str, email: str, schoolAssociation: str, educator: Educator, **kwargs):
+        if 'userID' in kwargs:
+            super().__init__(username, password, email, userID=kwargs['userID'])
+        else:
+            super().__init__(username, password, email)
         self.set_type("STU")
         self.schoolAssociation = None
         self.educator = None
-        if 'schoolAssociation' in kwargs:
-            self.set_school(kwargs['schoolAssociation'])
-        if 'educator' in kwargs:
-            self.set_educator(kwargs['educator'])
+        self.set_school(schoolAssociation)
+        self.set_educator(educator)
 
     def set_school(self, newSchool: str) -> bool:
-        if newSchool == None:
+        if newSchool != None and not isinstance(newSchool, str):
             print("School is invalid")
             return False
         else:
@@ -188,17 +235,26 @@ class Student(User):
             return True
 
     def set_educator(self, newEducator: Educator) -> bool:
-        if newEducator == None or not isinstance(newEducator, Educator):
+        if newEducator != None and not isinstance(newEducator, Educator):
             print("Educator is invalid")
             return False
         else:
             self.educator = newEducator
             return True
         
+    def get_school(self) -> str:
+        return self.schoolAssociation
+    
+    def get_educator(self) -> Educator:
+        return self.educator
+        
     def __str__(self) -> str:
-        ret = super.__str__()
+        ret = super().__str__()
         if not (self.schoolAssociation == None):
             ret += f"\nSchool Associated: {self.schoolAssociation}"
-        if self.educator is not None:
-            ret += f"\nEducator: {self.educator.get_username()}"
+        if not (self.educator == None):
+            ret += f"\nEducator: {self.get_educator().get_username()}\n"
         return ret
+    
+    def to_database(self) -> str:
+        return f"{super().to_database()},{self.get_school()},{self.get_educator().get_username()}\n"

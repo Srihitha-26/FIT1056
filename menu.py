@@ -51,14 +51,14 @@ class Menu:
 
         return menuOptions
     
-    def create_account_type_menu(typeList: list[str]):
+    def create_account_type_menu(self,typeList: list[str]):
         print("Choose account type:\n")
         return typeList
 
 
-    def option_select(optionList: list[str]) -> str:
+    def option_select(self,optionList: list[str]) -> str:
         for i in range(len(optionList)):
-            print(f"{i+1}) {optionList[i]}\n")
+            print(f"{i+1}) {optionList[i]}")
 
         while True:
             try:

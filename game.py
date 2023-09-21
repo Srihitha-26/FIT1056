@@ -6,9 +6,11 @@ Group: MA_FRI_1600_G2
 """
 
 
+import os
+
 class Game:
-    def __init__(self, quizFile="./database/quizzes.txt"):
-        self.quizFile = quizFile
+    baseFile = os.path.dirname(os.path.realpath('__file__'))
+    quizFile = os.path.join(baseFile,'database\quizzes.txt')
 
     def attemptQuizzes(self):
         readFile = open(self.quizFile, "r", encoding="utf8")
@@ -19,13 +21,13 @@ class Game:
         codeAnswers = []
 
         for line in lines:
-            (question, initialCode, answer, codeAnswer) = line.strip("\n").split(",")
-            questions.append[question]
-            initialCodes.append[initialCode]
-            answers.append[answer]
-            codeAnswers.append[codeAnswer]
+            (question, initialCode, answer, codeAnswer) = line.split(",")
+            questions.append(question)
+            initialCodes.append(initialCode)
+            answers.append(answer)
+            codeAnswers.append(codeAnswer)
 
-        for i in questions:
+        for i in range(len(questions)):
             while True:
                 print(questions[i])
                 givenCode = initialCode[i].split(';')
