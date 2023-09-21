@@ -1,3 +1,11 @@
+"""
+FIT1056 Software Development Phase
+Student name: Yong Wen Jian
+Student ID: 33561583
+Group: MA_FRI_1600_G2
+"""
+
+
 class Game:
     def __init__(self, quizFile="./database/quizzes.txt"):
         self.quizFile = quizFile
@@ -31,7 +39,7 @@ class Game:
                         try:
                             userInputs.pop()
                             print("\033[A\033[A") # Clears a line
-                            print("\033[A\033[A")
+                            print("\033[A\033[A") # Clears a line
                         except IndexError:
                             print("No previous code has been typed.")
 

@@ -1,3 +1,11 @@
+"""
+FIT1056 Software Development Phase
+Student name: Yong Wen Jian
+Student ID: 33561583
+Group: MA_FRI_1600_G2
+"""
+
+
 from users import *
 
 class Menu:

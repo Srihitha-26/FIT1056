@@ -1,3 +1,11 @@
+"""
+FIT1056 Software Development Phase
+Student name: Yong Wen Jian
+Student ID: 33561583
+Group: MA_FRI_1600_G2
+"""
+
+
 from menu import Menu
 from users import *
 from game import *
@@ -16,13 +24,16 @@ class Login:
                 break
         return result
 
-    def create_account(accountType: str, allIDs: list[str], **kwargs) -> User:
+    def create_account(accountType: str, allIDs: list[str], allUsernames: list[str], **kwargs) -> User:
         # TODO: Add accounts into files here.
         newUser = User("Placeholder","Placeholder","Placeholder@email.nul")
         while True:
             usernameInput = input("\nPlease enter a username: ")
             if newUser.set_username(usernameInput):
-                break
+                if newUser.get_username() not in allUsernames:
+                    break
+                else:
+                    print("Username has been taken.")
         while True:
             passwordInput = input("\nPlease enter your password: ")
             if newUser.set_password(passwordInput):
@@ -86,11 +97,48 @@ class Login:
                 return None
                         
         return newUser
+    
 
-        
+    def delete_account(user: User):
+        userType = user.get_type()
+
+        match userType:
+            case "DEV":
+                userFile = "./database/devs.txt"
+            case "INV":
+                userFile = "./database/invs.txt"
+            case "EDU":
+                userFile = "./database/edus.txt"
+            case "STU":
+                userFile = "./database/stus.txt"
+
+        # Read the existing user data from the file
+        with open(userFile, "r") as file:
+            lines = file.readlines()
+
+        # Create a new list of lines without the user's data
+        new_lines = []
+        user_found = False
+        for line in lines:
+            existing_username, _ = line.strip().split(",")
+            if existing_username != user.get_username():
+                new_lines.append(line)
+            else:
+                user_found = True
+                       
+        # If the user was found and their data removed, update the file
+        if user_found:
+            with open(userFile, "w") as file:
+                file.writelines(new_lines)
+            return True  # Account successfully deleted
+        else:
+            return False  # User not found
+
+
     def login(self):
         devFile = open("./database/devs.txt", "r", encoding="utf8")
         lines = list(devFile)
+        devFile.close()
         devUsernames = []
         devPasswords = []
         devAccounts = []
@@ -175,6 +223,7 @@ class Login:
             stuSchools.append(school)
             stuEducator.append(educator)
 
+        allUsernames = [devUsernames, invUsernames, eduUsernames, stuUsernames]
         allIDs = [devIDs, invIDs, eduIDs, stuIDs]
 
         while True:
@@ -198,8 +247,8 @@ class Login:
 
                 case "Create Account":
                     typeOption = self.menu.option_select(self.menu.create_account_type_menu(User.availableTypes))
-                    newAccount = self.create_account(typeOption, allIDs, edus=[eduUsernames,eduPasswords,eduEmails,eduSchools])
-                    self.menu.set_user(newAccount)
+                    self.menu.set_user(self.create_account(typeOption, allIDs, allUsernames, edus=[eduUsernames,eduPasswords,eduEmails,eduSchools]))
+                    
 
                 case "Exit Program":
                     print("Exiting program...")
@@ -317,8 +366,8 @@ class Login:
                     while True:
                         confirmInput = input("Confirm account deletion? (Y/N): ").upper()
                         if confirmInput == "Y":
+                            self.delete_account(self.menu.get_user())
                             self.menu.set_user(None)
-                            # TODO: Add deletion in files here.
                             break
                         elif confirmInput == "N":
                             print("Deletion cancelled, returning to menu.")

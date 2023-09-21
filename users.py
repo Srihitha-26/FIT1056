@@ -1,4 +1,13 @@
+"""
+FIT1056 Software Development Phase
+Student name: Yong Wen Jian
+Student ID: 33561583
+Group: MA_FRI_1600_G2
+"""
+
+
 import random
+import re
 
 class User():
     typeList = ["DEV", "INV", "EDU", "STU"]
@@ -29,17 +38,15 @@ class User():
             return True
 
     def set_password(self,newPassword: str) -> bool:
-        if newPassword == None:
-            print("Username is not entered.")
-            return False
-        
-        elif len(newPassword) < 5:
-            print("Password is too short")
-            return False
-        
+        min_length = 8
+        have_spl_char = re.search(r'[!@#$%&*~]', newPassword) is not None
+
+        if len(newPassword) < min_length:
+            return False, "Password must be at least 8 characters long."
+        elif not have_spl_char:
+            return False, "Password must contain at least one special character."
         else:
-            self.password = newPassword
-            return True
+            return True, "Your password has been set"
         
     def set_email(self, newEmail: str) -> bool:
         if newEmail == None:
