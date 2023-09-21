@@ -1,0 +1,1 @@
+Return a value equating to the variable a added to the variable b,a=5\nb=10;a=10\nb=27;a=50\nb=25,15;34;77,return a+b
