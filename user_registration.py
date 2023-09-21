@@ -1,3 +1,5 @@
+import re
+
 user_data = "user_data.txt"
 
 
@@ -5,7 +7,6 @@ user_data = "user_data.txt"
 def register_user(username, password):
     """
     Registers a new user by adding their username and password to the user data file.
-
     :param username: The username chosen by the user for their account.
     :param password: The password chosen by the user for their account.
     :return: None
@@ -24,6 +25,18 @@ def is_username_taken(username):
     return False
 
 
+def is_valid_password(password):
+    min_length = 8
+    have_spl_char = re.search(r'[!@#$%&*~]', password) is not None
+
+    if len(password) < min_length:
+        return False, "Password must be at least 8 characters long."
+    elif not have_spl_char:
+        return False, "Password must contain at least one special character."
+    else:
+        return True, "Your password has been set"
+
+
 def login_user(username, password):
     with open(user_data, "r") as file:
         for line in file:
@@ -40,10 +53,16 @@ def user_registration():
             print("Username is already taken. Please choose another.")
         else:
             break
+    while True:
+        password = input("Enter a password: ")
+        is_valid, message = is_valid_password(password)
+        if is_valid:
+            break
+        else:
+            print(f"Invalid password: {message}")
 
-    password = input("Enter a password: ")
-    register_user(username, password)
-    print("Registration successful!")
+        register_user(username, password)
+        print("Registration successful!")
 
 
 # User Login
@@ -57,54 +76,3 @@ def user_login():
             break
         else:
             print("Invalid username or password. Please try again.")
-
-# def user_login(username, password):  # Add arguments here
-#     while True:
-#         if login_user(username, password):
-#             print(f"Welcome, {username}!")
-#             break
-#         else:
-#             print("Invalid username or password. Please try again.")
-
-
-
-# # Function to delete a user account
-# def delete_user_account(username):
-#     # Read the existing user data from the file
-#     with open(user_data, "r") as file:
-#         lines = file.readlines()
-#
-#     # Create a new list of lines without the user's data
-#     new_lines = []
-#     user_found = False
-#     for line in lines:
-#         existing_username, _ = line.strip().split(",")
-#         if existing_username != username:
-#             new_lines.append(line)
-#         else:
-#             user_found = True
-#
-#     # If the user was found and their data removed, update the file
-#     if user_found:
-#         with open(user_data, "w") as file:
-#             file.writelines(new_lines)
-#         return True  # Account successfully deleted
-#     else:
-#         return False  # User not found
-#
-#
-# # Example usage to delete a user account
-# def delete_account():
-#     username = input("Enter your username: ")
-#     password = input("Enter your password: ")
-#
-#     if login_user(username, password):
-#         if delete_user_account(username):
-#             print("Account successfully deleted.")
-#         else:
-#             print("Account not found. Deletion failed.")
-#     else:
-#         print("Invalid username or password. Deletion failed.")
-
-# User deletion function usage
-# delete_account()
