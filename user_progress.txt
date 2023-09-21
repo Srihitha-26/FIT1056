@@ -1,0 +1,7 @@
+# username,password, modules_completed,points_received,questions_answered
+datascience, datascience,2,20,4
+srihitha,4,40,5
+Daniel,danny4!,0,0,4
+john,jonniefinee23400
+Srihitha,fit1056
+fit1056,fit1056
