@@ -7,22 +7,41 @@ Group: MA_FRI_1600_G2
 
 
 from users import *
-
+"""
+The menu class represents what function options can be displayed to the user.
+"""
 class Menu:
+    """
+    Constructor for the Menu class
+    """
     def __init__(self):
         self.user = None
 
+    """
+    Sets the user of the menu
+    :param newUser: A user instance to be put into the menu
+    :return: A boolean representing if the new user is set successfully
+    """
     def set_user(self, newUser: User) -> bool: 
         if newUser == None or isinstance(newUser, User):
             self.user = newUser
             return True
         else:
             return False
-        
+    
+
+    """
+    Gets the current user of the menu class
+    :return: The user instance using the menu class
+    """
     def get_user(self) -> User:
         return self.user
     
-    def main_menu(self):
+    """
+    The main menu representing the functions that the current user can interact with.
+    :return: A list of strings representing the allowable actions of the user
+    """
+    def main_menu(self) -> list[str]:
         menuOptions = []
         if self.user == None:
             menuOptions.append("Log In")
@@ -51,11 +70,19 @@ class Menu:
 
         return menuOptions
     
+    """
+    The menu given when user chooses to create an account
+    :return: A list of types of account that can be made in the system.
+    """
     def create_account_type_menu(self,typeList: list[str]):
         print("Choose account type:\n")
         return typeList
 
-
+    """
+    Provides numbering for a list of options and prompting the user to choose the option
+    :param optionList: A list of strings containing the allowable actions in the given menu
+    :return: A string representing the user's chosen option
+    """
     def option_select(self,optionList: list[str]) -> str:
         for i in range(len(optionList)):
             print(f"{i+1}) {optionList[i]}")

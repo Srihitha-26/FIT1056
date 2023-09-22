@@ -11,78 +11,145 @@ from users import *
 from game import *
 import os
 
+"""
+The login class represents the class that provides the options for a user to login and operate the functions within CodeVenture
+"""
 class Login:
+    """
+    A menu instance to be used to display the main menus
+    """
     menu = Menu()
+
+    """
+    A game instance to be used by students to run CodeVenture
+    """
     game = Game()
+
+    """
+    A string representing the directory to the current file
+    """
     baseFile = os.path.dirname(os.path.realpath('__file__'))
-    
+
+    """
+    A string representing the path to the developer data file
+    """
     devsData = os.path.join(baseFile,'database\devs.txt')
+
+    """
+    A string representing the path to the investor data file
+    """
     invsData = os.path.join(baseFile,'database\invs.txt')
+
+    """
+    A string representing the path to the educator data file
+    """
     edusData = os.path.join(baseFile,'database\edus.txt')
+
+    """
+    A string representing the path to the student data file
+    """
     stusData = os.path.join(baseFile,'database\stus.txt')
 
-    def auth_account(self,usernameInput: str, passwordInput: str, accounts: list[str]):
+    """
+    The method to authenticate an account based on a given username and password
+    :param usernameInput: A string representing the user provided username input
+    :param passwordInput: A string representing the user provided password input
+    :param accounts: A list of lists containing the username and password data for the accounts
+    """
+    def auth_account(self,usernameInput: str, passwordInput: str, accounts: list[list[str]]):
         result = False
+        
+        # Checking each username in accounts
         for i in range(len(accounts)):
+            # If accounts match, check the password provided
             if accounts[i][0] == usernameInput:
+                # If the passwords match, set the account index in accounts and set result to true
                 if accounts[i][1] == passwordInput:
                     self.accountIndex = i
                     result = True
                 break
         return result
 
+    """
+    The method to create an account in CodeVenture
+    :param accountType: The type of account to be created
+    :param allIDs: A list of IDs for every single user
+    :param allUsernames: A list of usernames for every single user
+    """
     def create_account(self,accountType: str, allIDs: list[str], allUsernames: list[str], **kwargs) -> User:
+        # Start with a new User instance where each variable can be replaced
         newUser = User("Placeholder","Placeholder","Placeholder@email.nul")
+
+        # Prompt to set the username of the account
         while True:
             usernameInput = input("\nPlease enter a username: ")
             if newUser.set_username(usernameInput):
-                if newUser.get_username() not in allUsernames:
+                if newUser.get_username() not in allUsernames: # Make sure the username does not already exist
                     break
                 else:
                     print("Username has been taken.")
+
+        # Prompt to set the password of the account
         while True:
             passwordInput = input("\nPlease enter your password: ")
             if newUser.set_password(passwordInput):
                 break
+
+        # Prompt to set the email of the account
         while True:
             emailInput = input("\nPlease enter your email: ")
             if newUser.set_email(emailInput):
                 break
+        
+        # Regenerate the ID once all base data have been given
         newUser.generate_id(allIDs)
         
+        # Check for the account type provided and prompt for additional information
         match accountType:
             case "Investor":
-                newUser = Investor(newUser.get_username, newUser.get_password, newUser.get_email, 0)
+                # Creating new Investor instance with all previous data
+                newUser = Investor(newUser.get_username, newUser.get_password, newUser.get_email, 0, userID=newUser.get_id())
+
+                # Prompt to set shares of the account
                 while True:
                     sharesInput = input("\nPlease enter the current amount of shares that is held (%): ")
                     if newUser.set_shares(sharesInput):
+                        # Append data once completed
                         with open(self.invsData, "a") as file:
                             file.write(f"{newUser.get_username()},{newUser.get_password()},{newUser.get_email()},{newUser.get_id()},{newUser.get_shares()}")
                             file.close()
                         break
 
             case "Educator":
-                newUser = Educator(newUser.get_username, newUser.get_password, newUser.get_email, "exschool")
+                # Creating new Educator instance with all previous data
+                newUser = Educator(newUser.get_username, newUser.get_password, newUser.get_email, "exschool", userID=newUser.get_id())
+                
+                # Prompt to set school of the account
                 while True:
                     schoolInput = input("\nPlease enter the name of the school that you are teaching at: ")
                     if newUser.set_school(schoolInput):
+                        # Append data once completed
                         with open(self.edusData, "a") as file:
                             file.write(f"{newUser.get_username()},{newUser.get_password()},{newUser.get_email()},{newUser.get_id()},{newUser.get_school()}")
                             file.close()
                         break
 
             case "Student":
-                newUser = Student(newUser.get_username, newUser.get_password, newUser.get_email)
+                # Creating new Student instance with all previous data
+                newUser = Student(newUser.get_username, newUser.get_password, newUser.get_email, userID=newUser.get_id())
 
+                # Prompt to see if the student has a school or educator
                 while True:
                     educationInput = input("\nAre you a student of an educator for this program? (Y/N): ").upper()
+                    
+                    # If yes, prompt for educator and school
                     if educationInput == "Y":
-                        while True:
+                        while True: # < Educator prompt
                             educatorInput = input("\nPlease enter the username of your educator: ")
                             found = False
-                            for i in range(kwargs['edus'][0]):
+                            for i in range(kwargs['edus'][0]): # kwargs['edus'] is a list of all educator data
                                 if educatorInput == kwargs['edus'][0][i]:
-                                    studentEducator = Educator(kwargs['edus'][0][i], kwargs['edus'][1][i], kwargs['edus'][2][i], kwargs['edus'][3][i])
+                                    studentEducator = Educator(kwargs['edus'][0][i], kwargs['edus'][1][i], kwargs['edus'][2][i], kwargs['edus'][4][i], userID=kwargs['edus'][3][i])
                                     newUser.set_educator(studentEducator)
                                     found = True
                                     break
@@ -92,15 +159,17 @@ class Login:
                                 print("Educator username not found in database.")
 
                         
-                        while True:
+                        while True: # < School prompt
                             schoolInput = input("\nPlease enter the name of the school that you are learning at: ")
                             if newUser.set_school(schoolInput):
+                                # Append data once completed
                                 with open(self.stusData, "a") as file:
                                     file.write(f"{newUser.get_username()},{newUser.get_password()},{newUser.get_email()},{newUser.get_id()},{newUser.get_school()},{newUser.get_educator().get_username()}")
                                     file.close()
                                 break
                         break
-
+                    
+                    # If not, append current data into file
                     elif educationInput == "N":
                         with open(self.stusData, "a") as file:
                             file.write(f"{newUser.get_username()},{newUser.get_password()},{newUser.get_email()},{newUser.get_id()},None,None")
@@ -110,13 +179,16 @@ class Login:
                     else:
                         print("Invalid Input.")
 
-            case _:
+            case _: # Case if somehow no types have matched
                 print("No account type matched")
                 return None
-                        
+        
+        # Returns newUser instance once account is made
         return newUser
     
-
+    """
+    Method for user to delete their own account
+    """
     def delete_account(self,user: User):
         userType = user.get_type()
 
@@ -155,8 +227,12 @@ class Login:
         else:
             return False  # User not found
 
-
+    """
+    Main login method for users to interact with the menu andd browse around CodeVenture
+    :return: None
+    """
     def login_main(self):
+        # Getting all devs data
         devFile = open(self.devsData, "r", encoding="utf8")
         lines = list(devFile)
         devFile.close()
@@ -168,7 +244,7 @@ class Login:
         devIDs = []
         devStartTimes = []
         devEndTimes = []
-
+        
         for line in lines:
             (username, password, email, type, devID, startTime, endTime) = line.strip("\n").split(",")
             devUsernames.append(username)
@@ -180,6 +256,7 @@ class Login:
             devStartTimes.append(startTime)
             devEndTimes.append(endTime)
 
+        # Getting all investor data
         invFile = open(self.invsData, "r", encoding="utf8")
         lines = list(invFile)
         invFile.close()
@@ -201,6 +278,7 @@ class Login:
             invIDs.append(invID)
             invShares.append(shares)
 
+        # Getting all educator data
         eduFile = open(self.edusData, "r", encoding="utf8")
         lines = list(eduFile)
         eduFile.close()
@@ -223,6 +301,7 @@ class Login:
             eduIDs.append(eduID)
             eduSchools.append(school)
 
+        # Getting all student data
         stuFile = open(self.stusData, "r", encoding="utf8")
         lines = list(stuFile)
         stuFile.close()
@@ -247,15 +326,22 @@ class Login:
             stuSchools.append(school)
             stuEducator.append(educator)
 
+        # Creating a list of all usernames and IDs to be used for account creation
         allUsernames = [devUsernames, invUsernames, eduUsernames, stuUsernames]
         allIDs = [devIDs, invIDs, eduIDs, stuIDs]
 
+        # While true loop to keep the program running
         while True:
+            # Print and get the option selected from the main menu
             selectedOption = self.menu.option_select(self.menu.main_menu())
+
+            # Match each selection to each case to run the corresponding functions
             match selectedOption:
-                case "Log In":
+                case "Log In": # User decides to log in
                     usernameInput = input("\nPlease enter your username: ")
                     passwordInput = input("\nPlease enter your password: ")
+
+                    # Go through authentication for each type of user, sets the menu user if the user is found
                     if self.auth_account(usernameInput,passwordInput,devAccounts):
                         self.menu.set_user(Developer(devUsernames[self.accountIndex], devPasswords[self.accountIndex], devEmails[self.accountIndex], [devStartTimes[self.accountIndex],devEndTimes[self.accountIndex]], userID=devIDs[self.accountIndex]))
                     elif self.auth_account(usernameInput,passwordInput,invAccounts):
@@ -273,100 +359,119 @@ class Login:
                                 studentEducator = Educator(eduUsernames[i], eduPasswords[i], eduEmails[i], eduSchools[i], userID=eduIDs[i])
                                 break     
                         self.menu.set_user(Student(stuUsernames[self.accountIndex], stuPasswords[self.accountIndex], stuEmails[self.accountIndex], studentSchool, studentEducator, userID=stuIDs[self.accountIndex]))
-                    else:
+                    
+                    # Executed if account is not found
+                    else: 
                         print("Invalid account username or password, returning to menu.")
 
-                case "Create Account":
+                case "Create Account": # User decides to make an account
                     typeOption = self.menu.option_select(self.menu.create_account_type_menu(User.availableTypes))
-                    self.menu.set_user(self.create_account(typeOption, allIDs, allUsernames, edus=[eduUsernames,eduPasswords,eduEmails,eduSchools]))
+                    self.menu.set_user(self.create_account(typeOption, allIDs, allUsernames, edus=[eduUsernames,eduPasswords,eduEmails,eduIDs,eduSchools]))
                     
 
-                case "Exit Program":
+                case "Exit Program": # User decides to stop using CodeVenture
                     print("Exiting program...")
                     break
 
-                case "View Shares":
+                case "View Shares": # Investor decides to view shares
                     print(f"Shares: {self.menu.get_user().get_shares()}%")
 
-                case "Buy Shares":
+                case "Buy Shares": # Investor decides to buy shares
                     print(f"Current Shares: {self.menu.get_user().get_shares()}%")
+
+                    # Prompt for shares input
                     while True:
                         try:
                             sharesInput = float(input("\nPlease enter the percentage(%) of shares to buy: "))
                         except ValueError:
                             print("Invalid amount of shares.")
                         
+                        # Checking if the bought shares exceeds threshold or is negative.
                         if sharesInput > (100 - self.menu.get_user().get_shares()):
                             print("Owned shares cannot surpass 100%")
                         elif sharesInput < 0:
                             print("Cannot buy negative shares")
+
+                        # If shares is valid, it is bought
                         else:
                             self.menu.get_user().set_shares(sharesInput + self.menu.get_user().get_shares())
                             print(f"Bought {sharesInput}% of shares.")
                             break
 
-                case "Sell Shares":
+                case "Sell Shares": # Investor decides to sell shares
                     print(f"Current Shares: {self.menu.get_user().get_shares()}%")
+
+                    # Prompt for shares input
                     while True:
                         try:
                             sharesInput = float(input("\nPlease enter the percentage(%) of shares to sell: "))
                         except ValueError:
                             print("Invalid amount of shares.")
                         
+                        # Checking if the sold shares exceeds threshold or is negative.
                         if sharesInput > self.menu.get_user().get_shares():
                             print("Sold shares cannot surpass owned shares.")
                         elif sharesInput < 0:
                             print("Cannot sell negative shares")
+                            
+                        # If shares is valid, it is sold
                         else:
                             self.menu.get_user().set_shares(self.menu.get_user().get_shares() - sharesInput)
                             print(f"Sold {sharesInput}% of shares.")
                             break
 
 
-                case "Set New Working Times":
+                case "Set New Working Times": # Developer decides to change working times
                     print(f"Current working times: {self.menu.get_user().get_times()[0]} - {self.menu.get_user().get_times()[1]}")
+
+                    # Prompt for new working times
                     while True:
                         startInput = input("Set new starting time (HH:MM): ")
                         endInput = input("Set new ending time (HH:MM): ")
-                        if self.menu.get_user().set_times([startInput, endInput]):
+                        if self.menu.get_user().set_times([startInput, endInput]): # Checking if times are set
                             break
 
-                case "Add Quizzes":
+                case "Add Quizzes": # Educator decides to create a quiz
                     self.game.create_quiz()
                 
-                case "Remove Quizzes":
+                case "Remove Quizzes": # Educator decides to remove a quiz
                     self.game.remove_quiz()
                 
-                case "Attempt Quizzes":
+                case "Attempt Quizzes": # Student decides to play the quizzes
                     self.game.attemptQuizzes()
                 
-                case "Change Associated School":
+                case "Change Associated School": # Educator/Student decides to change school names
+                    # Prompt for new school input
                     while True:
                         schoolInput = input("Please enter the new school name: ")
                         if self.menu.get_user().set_school(schoolInput):
                             break
 
-                case "Set Educator":
+                case "Set Educator": # Student decides to set new educator
+                    # Prompt for educator username
                     while True:
                         educatorInput = input("\nPlease enter the username of your educator: ")
                         found = False
                         for i in range(eduUsernames):
-                            if educatorInput == eduUsernames:
-                                studentEducator = Educator(eduUsernames[i], eduPasswords[i], eduEmails[i], eduSchools[i])
+                            if educatorInput == eduUsernames: # Setting new student educator instance if educator is found
+                                studentEducator = Educator(eduUsernames[i], eduPasswords[i], eduEmails[i], eduSchools[i], userID=eduIDs[i])
                                 if self.menu.get_user().set_educator(studentEducator):
                                     found = True
                                     break
                         if found:
                             break
+
+                        # Executed if educator username is not found in database
                         else:
                             print("Educator not found.")
                 
-                case "View Profile":
+                case "View Profile": # User decides to view their profile
                     print(str(self.menu.get_user()))
                 
-                case "Change Password":
+                case "Change Password": # User decides to change their password
                     tries = 0
                     passed = False
+                    # Prompt for old password
                     while True:
                         oldPass = input("Please enter the current password: ")
                         if oldPass == self.menu.get_user().get_password():
@@ -375,22 +480,23 @@ class Login:
                         else:
                             tries += 1
                             print("Password is incorrect")
-                            if tries > 2:
+                            if tries > 2: # Executed if too many tries are done
                                 print("Tries exceeded, returning to menu.")
                                 break
                     
+                    # If correct password is entered, prompt to set a new password
                     while passed:
                         newPass = input("Please enter the new password: ")
-                        if self.menu.get_user().set_password(newPass):
+                        if self.menu.get_user().set_password(newPass): # Prompt to enter new password again to confirm
                             confirmPass = input("Please re-enter the new password: ")
                             if self.menu.get_user().get_password() == confirmPass:
                                 print("New password set.")
                                 break
-                            else:
+                            else: # Return to entering a new password if the confirm password does not match
                                 print("Re-entered password does not match the new password.")
                 
-                case "Log Out":
-                    print("Saving data.")
+                case "Log Out": # User chooses to log out
+                    print("Saving data.") # Saves all data that may be changed during use
                     userType = self.menu.get_user().get_type()
 
                     match userType:
@@ -422,14 +528,16 @@ class Login:
                         file.writelines(new_lines)
                         file.close()
 
-                    print("Logging out.")
+                    # Once all data is saved, log out.
+                    print("Logging out.") 
                     self.menu.set_user(None)
 
-                case "Delete Account":
+                case "Delete Account": # User chooses to delete their own account
                     while True:
+                        # Prompt for confirmation
                         confirmInput = input("Confirm account deletion? (Y/N): ").upper()
                         if confirmInput == "Y":
-                            self.delete_account(self.menu.get_user())
+                            self.delete_account(self.menu.get_user()) # Account is deleted if Y is inputted
                             self.menu.set_user(None)
                             break
                         elif confirmInput == "N":
