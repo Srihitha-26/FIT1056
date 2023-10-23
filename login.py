@@ -10,53 +10,58 @@ from menu import Menu
 from users import *
 from game import *
 import os
+from msvcrt import getch
+import getpass, sys
 
-"""
-The login class represents the class that provides the options for a user to login and operate the functions within CodeVenture
-"""
+
 class Login:
+    """
+    The login class represents the class that provides the options for a user to login and operate the functions within CodeVenture
+    """
+    
+    menu = Menu()
     """
     A menu instance to be used to display the main menus
     """
-    menu = Menu()
 
+    game = Game()
     """
     A game instance to be used by students to run CodeVenture
     """
-    game = Game()
 
+    baseFile = os.path.dirname(os.path.realpath('__file__'))
     """
     A string representing the directory to the current file
     """
-    baseFile = os.path.dirname(os.path.realpath('__file__'))
 
+    devsData = os.path.join(baseFile,'database\devs.txt')
     """
     A string representing the path to the developer data file
     """
-    devsData = os.path.join(baseFile,'database\devs.txt')
 
+    invsData = os.path.join(baseFile,'database\invs.txt')
     """
     A string representing the path to the investor data file
     """
-    invsData = os.path.join(baseFile,'database\invs.txt')
 
+    edusData = os.path.join(baseFile,'database\edus.txt')
     """
     A string representing the path to the educator data file
     """
-    edusData = os.path.join(baseFile,'database\edus.txt')
 
+    stusData = os.path.join(baseFile,'database\stus.txt')
     """
     A string representing the path to the student data file
     """
-    stusData = os.path.join(baseFile,'database\stus.txt')
 
-    """
-    The method to authenticate an account based on a given username and password
-    :param usernameInput: A string representing the user provided username input
-    :param passwordInput: A string representing the user provided password input
-    :param accounts: A list of lists containing the username and password data for the accounts
-    """
+    
     def auth_account(self,usernameInput: str, passwordInput: str, accounts: list[list[str]]):
+        """
+        The method to authenticate an account based on a given username and password
+        :param usernameInput: A string representing the user provided username input
+        :param passwordInput: A string representing the user provided password input
+        :param accounts: A list of lists containing the username and password data for the accounts
+        """
         result = False
         
         # Checking each username in accounts
@@ -70,13 +75,14 @@ class Login:
                 break
         return result
 
-    """
-    The method to create an account in CodeVenture
-    :param accountType: The type of account to be created
-    :param allIDs: A list of IDs for every single user
-    :param allUsernames: A list of usernames for every single user
-    """
+    
     def create_account(self,accountType: str, allIDs: list[str], allUsernames: list[str], **kwargs) -> User:
+        """
+        The method to create an account in CodeVenture
+        :param accountType: The type of account to be created
+        :param allIDs: A list of IDs for every single user
+        :param allUsernames: A list of usernames for every single user
+        """
         # Start with a new User instance where each variable can be replaced
         newUser = User("Placeholder","Placeholder","Placeholder@email.nul")
 
@@ -186,10 +192,11 @@ class Login:
         # Returns newUser instance once account is made
         return newUser
     
-    """
-    Method for user to delete their own account
-    """
+    
     def delete_account(self,user: User):
+        """
+        Method for user to delete their own account
+        """
         userType = user.get_type()
 
         match userType:
@@ -227,6 +234,39 @@ class Login:
         else:
             return False  # User not found
 
+
+    def mask_password(prompt: str ="Please enter your password: ") -> str:
+        """
+        Prompt for a password and masks the input.
+        :param prompt: A string working as a prompt for the user similar to input() 
+        :return: A string entered by the user.
+        """
+
+        if sys.stdin is not sys.__stdin__:
+            pwd = getpass.getpass(prompt)
+            return pwd
+        else:
+            pwd = ""        
+            sys.stdout.write(prompt)
+            sys.stdout.flush()        
+            while True:
+                key = ord(getch())
+                if key == 13: # Return Key
+                    sys.stdout.write('\n')
+                    return pwd
+                    break
+                if key == 8: # Backspace key
+                    if len(pwd) > 0:
+                        # Erases previous character.
+                        sys.stdout.write('\b' + ' ' + '\b')                
+                        sys.stdout.flush()
+                        pwd = pwd[:-1]                    
+                else:
+                    # Masks user input.
+                    char = chr(key)
+                    sys.stdout.write('*')
+                    sys.stdout.flush()                
+                    pwd = pwd + char
     """
     Main login method for users to interact with the menu andd browse around CodeVenture
     :return: None
@@ -339,7 +379,7 @@ class Login:
             match selectedOption:
                 case "Log In": # User decides to log in
                     usernameInput = input("\nPlease enter your username: ")
-                    passwordInput = input("\nPlease enter your password: ")
+                    passwordInput = self.mask_password("\nPlease enter your password: ")
 
                     # Go through authentication for each type of user, sets the menu user if the user is found
                     if self.auth_account(usernameInput,passwordInput,devAccounts):

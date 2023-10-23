@@ -1,9 +1,9 @@
 from login import Login
 
-"""
-The driver method for the CodeVenture program
-"""
 def main():
+    """
+    The driver method for the CodeVenture program
+    """
     login = Login()
     login.login_main()
 
