@@ -50,12 +50,13 @@ class Game:
 
                 # Provide one initial code to work on
                 givenCode = initialCodes[i].strip().split(';')
+                givenAnswers = answers[i].strip().split(';')
                 for k in range(len(givenCode)):
-                    givenCode[k] = "\n".join(givenCode[k].split('~~'))
-                print('Initial Code:\n' + givenCode[0])
+                    givenCode[k] = "\n    ".join(givenCode[k].split('~~'))
+                print('===== Initial Code =====\n    ' + givenCode[0])
 
                 # Prompting user for input
-                print("Type in your code to complete the question.\nType in (without quotes):\n'--delete--' to remove the last line\n'--clear--' to clear all lines\n'--finish--' to submit the code\n'--stop--' to see the answer\n")
+                print("\n===== Type in your code to complete the question. =====\nType (without quotes):\n'--delete--' to remove the last line\n'--clear--' to clear all lines\n'--finish--' to submit the code\n'--stop--' to see the answer\n")
                 userInputs = []
                 submitted = False
                 while True:
@@ -87,22 +88,30 @@ class Game:
                 # Check if user has given up
                 if submitted:
                     passed = True
-
+                    
+                    print("\n\n====== Going through test cases =====")
                     # Check answers using user inputted code for each test case
                     for j in range(len(givenCode)):
+                        print(f"\nTest {j + 1}")
                         try:
-                            codeList = [givenCode] + userInputs
-                            code = "\n".join(codeList)
-                            if str(exec(code)) != answers[j]: # exec method executes methods from string
+                            codeList = [givenCode[j]] + userInputs
+                            code = "\n    ".join(codeList)
+                            code = "def newFunc():\n    " + code + "\nresult = newFunc()"
+                            local = locals()
+                            exec(code, globals(), local)
+                            result = local["result"]
+                            print(f"Result: {result}")
+                            print(f"Answer: {givenAnswers[j]}")
+                            if str(result) != givenAnswers[j]: # exec method executes methods from string
                                 passed = False
-                                print("Code is incorrect.")
+                                print("\nCode is incorrect; Test cases unmatched.")
                                 break
                         except:
                             passed = False
-                            print("Code is incorrect.")
+                            print("\nCode is incorrect; Error during execution of code.")
                             break
                     if passed:
-                        print("Code passed!")
+                        print("\nCode passed!")
                         break
                 
                 # Executes when student gives up
@@ -112,7 +121,7 @@ class Game:
         
         # Executes after all questions have been done
         readFile.close()
-        print("All questions finished, returning to menu.")
+        print("All questions finished, returning to menu.\n")
     
     """
     Allows educator to create quizzes to be done by students.

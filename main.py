@@ -1,7 +1,6 @@
 # This is a sample Python script.
 from track_progress import track_progress
 from user_registration import user_registration, user_login
-from account_deletion import delete_account
 
 
 def main():
