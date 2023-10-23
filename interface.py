@@ -12,7 +12,7 @@ class Interface(tk.Tk):
     def __init__(self, title, width=1000, height=560):
         """
         Constructor for the Interface class,
-        the main window for the HCMS.
+        the main window for CodeVenture.
         :param title: str
         :param width: int - default 960 pixels
         :param height: int - default 540 pixels
@@ -23,9 +23,8 @@ class Interface(tk.Tk):
 
 
 if __name__ == "__main__":
-    # DO NOT MODIFY THIS
-    hcms = Interface("Health Clinic Management System")
-    login = LoginFrame(hcms)
+    cv = Interface("CodeVenture")
+    login = LoginFrame(cv)
     login.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-    hcms.mainloop()
+    cv.mainloop()
     print("--- End of program execution ---")
