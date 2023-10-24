@@ -1,0 +1,9 @@
+A Python variable is a named container for data. You can store values like numbers, text, or more complex data 
+types in variables. Variables are created by using the assignment operator =. 
+
+For example:
+my_variable = 42
+
+Here, my_variable holds the integer value 42. Python is dynamically typed, so you don't need to specify the data 
+type explicitly. Variable names can contain letters, numbers, and underscores but can't start with a number. 
+They are case-sensitive.

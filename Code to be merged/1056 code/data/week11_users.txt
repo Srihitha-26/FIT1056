@@ -1,0 +1,12 @@
+admin,admin,AD,1,,
+admin2,admin2,AD,1,,
+reception,receptionpw,RE,1,,
+reception2,reception2pw,RE,1,,
+reception3,reception3pw,RE,1,,
+300001,w01fgang,PA,1,Wolfgang,Mozart
+300002,fr3d3r1c,PA,1,Frederic,Chopin
+300003,j0hann,PA,1,Johann Sebastian,Bach
+300004,beeth0v3n,PA,1,Ludwig,van Beethoven
+300005,130nard0,PA,1,Leonardo,Da Vinci
+300006,srihitha,PA,1,Srihitha,Mallepaddi
+123456,yong,PA,1,Yong,Ken
