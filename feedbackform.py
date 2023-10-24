@@ -45,11 +45,14 @@ class FeedbackForm(tk.Frame):
         response2 = self.question2_entry.get()
 
         # Save the feedback and responses to a file
-        with open("feedback.txt", "a") as feedback_file:
-            feedback_file.write("Main Feedback: " + feedback_text + "\n")
-            feedback_file.write("Response 1: " + response1 + "\n")
-            feedback_file.write("Response 2: " + response2 + "\n")
-
+        try:
+            with open("feedbackform.txt", "a") as feedback_file:
+                feedback_file.write("Name: " + feedback_text + "\n")
+                feedback_file.write("Response 1: " + response1 + "\n")
+                feedback_file.write("Response 2: " + response2 + "\n")
+        except Exception as e:
+            print("An error occurred:", str(e))
+        
         # Display a message to confirm feedback submission
         messagebox.showinfo("Feedback Submitted", "Thank you for your feedback!")
 
@@ -60,7 +63,7 @@ class FeedbackForm(tk.Frame):
 
     def return_to_menu(self):
         """
-        Event handler to return to the patient's main menu.
+        Event handler to return to the students main menu.
         """
         self.master.deiconify()  # Show the main window
         self.destroy()  # Destroy the module frame
