@@ -1,15 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-# a class for managing modules
 class Modules(tk.Frame):
-    """
-    A class for managing modules and displaying multiple-choice questions.
-    """
     def __init__(self, master, student_frame):
-        """
-        The constructor for the StudentFrame class.
-        """
         super().__init__(master)
         self.master = master
         self.student_frame = student_frame
@@ -22,7 +15,6 @@ class Modules(tk.Frame):
             "Functions": False
         }
 
-        # Configure grid rows and columns
         for row_count in range(8):
             self.master.rowconfigure(row_count, weight=1, uniform="row")
 
@@ -44,6 +36,9 @@ class Modules(tk.Frame):
         self.progress_label.grid(row=6, column=0, padx=10, pady=10, sticky="w")
 
         # Progress bar to track module completion
+        # self.progress = ttk.Progressbar(self, orient="horizontal", length=200, mode="determinate")
+        # self.progress.grid(row=6, column=0, columnspan=2, padx=10, pady=10)
+
         self.progress = ttk.Progressbar(self, orient="horizontal", length=200, mode="determinate")
         self.progress.grid(row=6, column=1, padx=10, pady=10, sticky="ew")
 
@@ -85,16 +80,9 @@ class Modules(tk.Frame):
             }
         }
 
-    # Open a module if it hasn't been completed
     def open_module(self, module_name):
-        """
-        Open a module if it hasn't been completed.
-
-        Args:
-            module_name: The name of the module to open.
-        """
-        try:
-            if not self.modules[module_name]:
+        if not self.modules[module_name]:
+            try:
                 with open(f"{module_name}.txt", "r") as module_file:
                     module_text = module_file.read()
 
@@ -111,20 +99,12 @@ class Modules(tk.Frame):
                 mcq_button = tk.Button(module_frame, text="Show MCQ", command=lambda name=module_name: self.display_mcq(module_frame, name))
                 mcq_button.grid(row=1, column=0, padx=10, pady=10, columnspan=2)
 
-            else:
-                messagebox.showinfo("Module Completion", f"You have already completed the '{module_name}' module.")
-        except KeyError:
-            raise FileNotFoundError("File is invalid.")
+            except FileNotFoundError:
+                print(f"Text content for {module_name} not found.")
+        else:
+            messagebox.showinfo("Module Completion", f"You have already completed the '{module_name}' module.")
 
-    # Display multiple-choice questions for a module
     def display_mcq(self, module_frame, module_name):
-        """
-        Display multiple-choice questions for a module.
-
-        Args:
-            module_frame: The module frame.
-            module_name: The name of the module.
-        """
         if module_name in self.mcqs:
             mcq_frame = tk.Frame(module_frame)
             mcq_frame.grid(row=2, column=0, padx=10, pady=10, columnspan=2)
@@ -142,19 +122,9 @@ class Modules(tk.Frame):
                 answer_button.pack()
 
         else:
-            raise KeyError("MCQ Not Found", f"No MCQ available for the '{module_name}' module.")
+            messagebox.showinfo("MCQ Not Found", f"No MCQ available for the '{module_name}' module.")
 
-    # Check the submitted MCQ answer
     def check_mcq_answer(self, question, mcq_data, answer_var, mcq_frame):
-        """
-        Check the submitted MCQ answer.
-
-        Args:
-            question: The question.
-            mcq_data: MCQ data.
-            answer_var: The selected answer.
-            mcq_frame: The MCQ frame.
-        """
         correct_answer = mcq_data["correct_answer"]
         student_answer = answer_var.get()
 
@@ -169,37 +139,25 @@ class Modules(tk.Frame):
             show_answer_button = tk.Button(mcq_frame, text="Show Answer", command=lambda: self.show_answer(question, mcq_data))
             show_answer_button.pack()
 
-    # Retry the MCQ questions
-    def retry_mcq(self, mcq_frame, question, mcq_data):
-        """
-        Retry the MCQ questions.
 
-        Args:
-            mcq_frame: The MCQ frame.
-            question: The question.
-            mcq_data: MCQ data.
-        """
+    def retry_mcq(self, mcq_frame, question, mcq_data):
         for widget in mcq_frame.winfo_children():
             widget.destroy()
         self.display_mcq(mcq_frame.master, mcq_frame.master.title())
 
-    # Display the correct answer for an MCQ
     def show_answer(self, question, mcq_data):
-        """
-        Display the correct answer for an MCQ.
-
-        Args:
-            question: The question.
-            mcq_data: MCQ data.
-        """
         correct_answer = mcq_data["correct_answer"]
         messagebox.showinfo("Correct Answer", f"The correct answer is: {correct_answer}")
 
-    # Update the progress bar and completion label
+    # def complete_module(self, module_name, module_frame):
+    #     response = messagebox.askquestion("Module Completion", f"Have you completed the '{module_name}' module?")
+    #     if response == "yes":
+    #         self.modules[module_name] = True
+    #         # Update the progress bar and label
+    #         self.update_progress()
+        # module_frame.destroy()  # Close the module frame
+
     def update_progress(self):
-        """
-        Update the progress bar and completion label.
-        """
         completed_modules = sum(1 for status in self.modules.values() if status)
         total_modules = len(self.modules)
         progress_value = (completed_modules / total_modules) * 100
@@ -209,16 +167,10 @@ class Modules(tk.Frame):
         if progress_value == 100:
             messagebox.showinfo("Congratulations", "You've completed all the given modules!")
 
-    # Return to the student's main menu
     def return_to_menu(self):
-        """
-        Return to the student's main menu
-        """
         self.master.deiconify()
         self.destroy()
         self.student_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-
-
 
 if __name__ == "__main__":
     pass
