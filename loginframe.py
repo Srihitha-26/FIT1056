@@ -1,12 +1,3 @@
-"""
-FIT1056 Problem Solving Tasks for Week 11
-Student name: Srihitha Mallepaddi 
-Student ID: 32796749
-Campus: Malaysia
-Group: MA_FRI_1600_G02
-"""
-
-
 # Third party imports
 import tkinter as tk
 

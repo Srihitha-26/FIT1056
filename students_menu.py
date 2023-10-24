@@ -4,6 +4,8 @@ import tkinter as tk
 from modules import Modules
 from feedbackform import FeedbackForm
 from progresstracker import ProgressTracker
+from todo import Todo_List
+from projectideas import ProjectIdeas
 
 
 class StudentFrame(tk.Frame):
@@ -44,12 +46,16 @@ class StudentFrame(tk.Frame):
 
 
         # The project ideas button
-        view_appointments_button = tk.Button(self, text="Project Ideas")
+        view_appointments_button = tk.Button(self, text="Project Ideas", command=self.show_project_frame)
         view_appointments_button.grid(row=4, column=0, padx=10, pady=10)
+
+        # The todo list button
+        view_appointments_button = tk.Button(self, text="Todo-list", command=self.show_todo_frame)
+        view_appointments_button.grid(row=5, column=0, padx=10, pady=10)
 
         # The logout button
         logout_button = tk.Button(self, text="Log out", command=self.logout)
-        logout_button.grid(row=5, column=0, padx=10, pady=10)
+        logout_button.grid(row=6, column=0, padx=10, pady=10)
 
     def show_modules_frame(self):
         """
@@ -74,6 +80,23 @@ class StudentFrame(tk.Frame):
         self.place_forget()
         progress_frame = ProgressTracker(self.master, self)
         progress_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+
+    def show_todo_frame(self):
+        """
+        Event handle to shows the todo-list for students
+        """
+        self.place_forget()
+        todo_frame = Todo_List(self.master, self)
+        todo_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+
+    def show_project_frame(self):
+        """
+        Event handle to shows personla project ideas for students
+        """
+        self.place_forget()
+        project_frame = ProjectIdeas(self.master, self)
+        project_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+
 
 
     def logout(self):
