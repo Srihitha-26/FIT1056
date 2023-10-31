@@ -13,6 +13,8 @@ import re
 The User class represents all users that are able to use the CodeVenture program
 """
 class User():
+    ### TODO: **TKINTER NO BLOCK**
+    # REPLACE: all set_ functions with the necessary prompts and errors
     """
     A list of types of users that exist
     """

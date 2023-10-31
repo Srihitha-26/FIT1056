@@ -12,6 +12,8 @@ from menu import Menu
 The Game class represents the CodeVenture quizzes to be made, deleted, or played.
 """
 class Game:
+    ### TODO: **TKINTER NO BLOCK** ###
+    # Replacing should be similar to modulehandler
     
     baseFile = os.path.dirname(os.path.realpath('__file__'))
     """
