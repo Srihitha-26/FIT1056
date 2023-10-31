@@ -1,0 +1,4 @@
+Arithmetic,What does the '+' operator do in Python?,Modulus;Combination;Addition;Multiplication,Addition
+Arithmetic,What does the '*' operator do in Python?,Exponentiation;Multiplication;Division;Truncation,Multiplication
+Arithmetic,What does the '%' operator do in Python?,Division;Percentile;Exponentiation;Modulus;Modulus
+Arithmetic,What does the '//' operator do in Python?,Division;Floor Division;Root Of;Equivalence,Floor Division
