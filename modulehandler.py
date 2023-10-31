@@ -129,6 +129,145 @@ class ModuleHandler:
             line = line.strip("\n")
 
         return Menu.option_select(modules)
+    
+    def create_mcq_quiz(self, moduleKey: str):
+        """
+        Allows educator to create quizzes to be done by students.
+        :return: None
+        """
+        while True:
+            # REPLACE: Only uses a line of text to input questions.
+            qnsInput = input("Please enter the question to be asked:\n")
+
+            # Checking qnsInput
+            if qnsInput is None or qnsInput == "":
+                # REPLACE: Error, question is empty
+                print("Question must not be empty.")
+            elif "," in qnsInput:
+                # REPLACE: Error, inputs cannot support ","
+                print("All inputs are not able to support commas(,) please retype the question.")
+            else:
+                break
+        
+        selectionList = []
+        hasSelection = False
+        while True:
+            if hasSelection:
+                # REPLACE: Put in the same window if hasSelection is True
+                print("Type in '--stop--' to submit all selections, or '--remove--' to remove the last selection.")
+            # REPLACE: Only uses a line of text to input questions.
+            selInput = input("Please enter a selection option:\n")
+            # Checking selInput
+            if selInput is None or selInput == "":
+                # REPLACE: Error, selection is empty
+                print("Question must not be empty.")
+            elif "," in selInput or ";" in selInput:
+                # REPLACE: Error, selections cannot support "," or ";"
+                print("Selections are not able to support commas(,) or semicolons(;) please retype the question.")
+            elif selInput == '--remove--':
+                if len(selectionList > 0):
+                    selectionList.pop(-1)
+                    if len(selectionList) == 0:
+                        hasSelection = False
+                else:
+                    # REPLACE: Error, no selections to remove.
+                    print("No selections to remove.")
+                    
+            elif selInput == '--stop--':
+                break
+
+            else:
+                hasSelection = True
+                selectionList.append(selInput)
+        
+        while True:
+            # REPLACE: Only uses a line of text to input questions.
+            ansInput = input("Please enter the answer to the question:\n")
+
+            # Checking ansInput
+            if ansInput is None or ansInput == "":
+                # REPLACE: Error, answer is empty
+                print("Answer must not be empty.")
+            elif "," in qnsInput:
+                # REPLACE: Error, inputs cannot support ","
+                print("All inputs are not able to support commas(,) please retype the question.")
+            elif ansInput not in selectionList:
+                # REPLACE: Error, answer not in selection list, rendering question impossible.
+                print(f"Selections: {selectionList}")
+                print("The answer is not in the selection list, please try again.")
+            else:
+                break
+        
+        writeFile = open(self.mcqData, "a", encoding="utf8")
+        writeLine = [moduleKey, qnsInput, ";".join(selectionList), ansInput]
+        writeFile.write("\n" + ",".join(writeLine))
+        writeFile.close()
+        print("Question added, returning to menu...\n")
+        
+
+    def remove_mcq_quiz(self, moduleKey: str):
+        """
+        Allows educator to remove unwanted quizzes.
+        :return: None
+        """
+        # Reading and seperating all questions to be given as options for removal
+        readFile = open(self.mcqData, "r", encoding="utf8")
+        lines = list(readFile)
+        readFile.close()
+
+        modules = []
+        questions = []
+        selections = []
+        answers = []
+
+        for line in lines:
+            (module, question, selection, answer) = line.strip("\n").split(",")
+            modules.append(module)
+            questions.append(question)
+            selections.append(selections)
+            answers.append(answer)
+        
+        ### TODO: Replace with **TKINTER** shenanigans ###
+        ### Selection block ###
+        indexList = []
+        incrementer = 1
+        # Providing all options for question removal
+        for i in range(len(questions)):
+            if module[i] == moduleKey:
+                indexList.append[i]
+                # REPLACE: Basically printing a list of questions and answers in the module, replace this how you'd like in tkinter.
+                print(f"[{incrementer}]\nQuestion: {questions[i]}\nAnswer: {answers[i]}\n\n")
+                incrementer += 1
+                
+        # Prompting for option to remove
+        while True:
+            try:
+                # REPLACE: Choosing from the list of questions and answers jn
+                removeInput = int(float(input("Pick an option to remove by number (Pick 0 to return without removing): \n")))
+                if removeInput > len(indexList) or removeInput < 0:
+                    # REPLACE: Selection isn't there, retry
+                    print("Invalid selection.") 
+                elif removeInput == 0:
+                    break
+                else:
+                    removeInput = indexList[removeInput - 1]
+                    questions.pop(removeInput)
+                    selections.pop(removeInput)
+                    answers.pop(removeInput)
+                    break
+            except ValueError:
+                # REPLACE: Error, selection isn't there, retry
+                print("Invalid option.") 
+
+        ### End of selection block ###
+
+        # Overwriting list once the options are removed
+        overwriteList = []
+        for i in range(len(questions)):
+            overwriteList.append[f"{modules[i]},{questions[i]},{selections[i]},{answers[i]}"]
+
+        overwriteFile = open(self.codeData, "w", encoding="utf8")
+        overwriteFile.write("\n".join(overwriteList))
 
     def create_code_quiz(self, moduleKey: str):
         """
