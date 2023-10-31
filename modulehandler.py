@@ -20,14 +20,14 @@ class ModuleHandler:
         ### TODO: Replace with **TKINTER** stuff ###
         ### Creation prompt block ###
         while True:
-            # Replace with a thing that allows them to type a line
+            # REPLACE: with a thing that allows them to type a line
             moduleInput = input("Please enter module name to be created:\n")
 
             # Checking if the thing is blank or "cancel" (cancel cannot be the name of the module)
-            if moduleInput is not None and moduleInput != 'cancel':
+            if moduleInput is not None or moduleInput == '' and moduleInput != 'cancel':
                 break
             else:
-                # Displaying error msg
+                # REPLACE: Error, module is nameless msg
                 print("The module must have a name (that is not 'cancel'), please try again.")
         ## End of creation prompt block ###
 
@@ -47,11 +47,11 @@ class ModuleHandler:
         ### Confirmation prompt block ###
         # While True block to repeat if they put invalid inputs
         while True:
-            # Basically to confirm that they want to delete everything, replace with Y/N buttons probably
+            # REPLACE: Basically to confirm that they want to delete everything, replace with Y/N buttons probably
             confirmation = input("\nThis action will remove all associated quizzes along with the module, are you sure? (Y/N):\n").upper()
             if confirmation == "Y":
                 while True:
-                    # Confiming they do want to delete by making them type the module name
+                    # REPLACE: Confiming they do want to delete by making them type the module name
                     confirmation = input("\nPlease type in '" + moduleKey + "' to delete the module or 'cancel' to cancel the operation:\n")
                     if confirmation == moduleKey:
                         confirmed = True
@@ -60,6 +60,7 @@ class ModuleHandler:
                         confirmed = False
                         break
                     else:
+                        # REPLACE: Error, input is not Y or N, can be removed if buttons are used
                         print("Invalid input, please try again.")
                 break
             elif confirmation == "N":
@@ -138,13 +139,15 @@ class ModuleHandler:
         ### Creation prompt block ###
         # While True block to repeat if invalid inputs have been made
         while True:
-            # Only uses a line of text to input questions.
+            # REPLACE: Only uses a line of text to input questions.
             qnsInput = input("Please enter the question to be asked:\n")
 
             # Checking qnsInput
-            if qnsInput == "":
+            if qnsInput is None or qnsInput == "":
+                # REPLACE: Error, question is empty
                 print("Question must not be empty.")
             elif "," in qnsInput:
+                # REPLACE: Error, questions cannot support ","
                 print("All inputs are not able to support commas(,) please retype the question.")
             else:
                 break
@@ -153,7 +156,7 @@ class ModuleHandler:
         testCases = []
         eduInputs = []
 
-        # Allow for multiline input for this, basically coding style, tabs and all.
+        # REPLACE ALL: Allow for multiline input for this, basically coding style, tabs and all.
         print("Type in your code to complete the initial code(s).\nType in (without quotes):\n'--delete--' to remove the last line\n'--clear--' to clear all lines\n'--next--' to move on to the next initial code test case\n'--finish--' to add this code to the initial code test case and finish\n")
         while True:
                 
@@ -161,8 +164,8 @@ class ModuleHandler:
                 eduInput = input()
 
                 # Checking for special options
-                # All of this is probably not needed if they can type in a next box (except for --next--, which allows them to code more test cases.)
-                # A 'Submit All' button can be used to replace the --finish-- thing
+                # NOTE: All of this is probably not needed if they can type in a next box (except for --next--, which allows them to code more test cases.)
+                # NOTE: A 'Submit All' button can be used to replace the --finish-- thing
                 if eduInput == '--delete--':
                     try:
                         eduInputs.pop()
@@ -190,12 +193,12 @@ class ModuleHandler:
         # Creating expected return value for each test case
         # If the test case is "a = 1\nb = 2", and the question is "Return the value of a+b" then the ansInput should be 3
         ansInput = []
-        # Going through all test cases, using a single line of text should suffice
+        # REPLACE: Going through all test cases, using a single line of text should suffice
         for i in range(len(testCases)):
             ansInput.append(input("Type in the returned item for this test case:\n " + "\n".join(testCases[i]).split("~~")))
 
         # Providing a piece of code that could be used to solve the question
-        # Same thing as the test cases thing, except this is the solution that works on all the test cases.
+        # REPLACE: Same thing as the test cases thing, except this is the solution that works on all the test cases.
         codedAns = []
         print("Type in your code to complete the initial code(s).\nType in (without quotes):\n'--delete--' to remove the last line\n'--clear--' to clear all lines\n'--finish--' to set the coded answer\n")
         while True:
@@ -263,7 +266,7 @@ class ModuleHandler:
                 indexList.append[i]
                 codedAns = '\n'.join(codeAnswer[i].split('~~'))
 
-                # Basically printing a list of questions and answers in the module, replace this how you'd like in tkinter.
+                # REPLACE: Basically printing a list of questions and answers in the module, replace this how you'd like in tkinter.
                 print(f"[{incrementer}]\nQuestion: {questions[i]}\n\nAnswer:\n {codedAns}\n\n")
                 incrementer += 1
                 
@@ -271,10 +274,11 @@ class ModuleHandler:
         # Prompting for option to remove
         while True:
             try:
-                # Choosing from the list of questions and answers jn
+                # REPLACE: Choosing from the list of questions and answers jn
                 removeInput = int(float(input("Pick an option to remove by number (Pick 0 to return without removing): \n")))
                 if removeInput > len(indexList) or removeInput < 0:
-                    print("Invalid selection.") # Selection isn't there, retry
+                    # REPLACE: Selection isn't there, retry
+                    print("Invalid selection.") 
                 elif removeInput == 0:
                     break
                 else:
@@ -285,7 +289,8 @@ class ModuleHandler:
                     codeAnswers.pop(removeInput)
                     break
             except ValueError:
-                print("Invalid option.") # Selection isn't there, retry
+                # REPLACE: Error, selection isn't there, retry
+                print("Invalid option.") 
 
         ### End of selection block ###
 
