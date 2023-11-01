@@ -54,7 +54,7 @@ class Game:
         """
         The function for any students to attempt the quizzes found within the mcq quiz file data.
         :param key: Key for the module to be played
-        :return: A list of integers representing the total answers, success, and failures of the quiz in that order
+        :return: A list of integers representing the total questions and correct answers of the quiz.
         """
         readFile = open(self.mcqFile, "r", encoding="utf8")
         lines = list(readFile)
@@ -72,7 +72,6 @@ class Game:
             answers.append(answer)
 
         cleared = 0
-        failed = 0
         total = 0
 
         incrementer = 0
@@ -106,17 +105,16 @@ class Game:
                     total += 1
                 else:
                     print(f"\nAnswer is incorrect.\nCorrect answer: {answers[i]}\nMoving to next question...")
-                    failed += 1
                     total += 1
 
-        return [total, cleared, failed]
+        return [total, cleared]
 
         
     def attempt_code_quizzes(self, key: str) -> list[int]:
         """
         The function for any students to attempt the quizzes found within the coding quiz file data.
         :param key: Key for the module to be played
-        :return: A list of integers representing the success, failures and total answers of the quiz
+        :return: A list of integers representing the total questions and correct answers of the quiz
         """
         # Reading quiz file, seperating each section into their own list
         readFile = open(self.codeFile, "r", encoding="utf8")
@@ -137,7 +135,6 @@ class Game:
             codeAnswers.append(codeAnswer)
 
         cleared = 0
-        failed = 0
         total = 0
 
         incrementer = 0
@@ -221,12 +218,11 @@ class Game:
                     # Executes when student gives up
                     else:
                         print("The coded answer is:\n" + "\n".join(codeAnswers[i].split("~~")))
-                        failed += 1
                         total += 1
                         break
         
         # Executes after all questions have been done 
         print("All questions finished, returning to menu.\n")
-        return [total, cleared, failed]
+        return [total, cleared]
     
     

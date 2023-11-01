@@ -386,10 +386,11 @@ class Login:
         stuIDs = []
         stuSchools = []
         stuEducator = []
+        stuCompletions = []
 
 
         for line in lines:
-            (username, password, email, type, stuID, school, educator) = line.strip("\n").split(",")
+            (username, password, email, type, stuID, school, educator, completions) = line.strip("\n").split(",")
             stuUsernames.append(username)
             stuPasswords.append(password)
             stuAccounts.append([username,password])
@@ -398,6 +399,7 @@ class Login:
             stuIDs.append(stuID)
             stuSchools.append(school)
             stuEducator.append(educator)
+            stuCompletions.append(completions)
 
         # Creating a list of all usernames and IDs to be used for account creation
         allUsernames = [devUsernames, invUsernames, eduUsernames, stuUsernames]
@@ -435,8 +437,16 @@ class Login:
                         for i in range(len(eduUsernames)):
                             if stuEducator[self.accountIndex] == eduUsernames[i]:
                                 studentEducator = Educator(eduUsernames[i], eduPasswords[i], eduEmails[i], eduSchools[i], userID=eduIDs[i])
-                                break     
-                        self.menu.set_user(Student(stuUsernames[self.accountIndex], stuPasswords[self.accountIndex], stuEmails[self.accountIndex], studentSchool, studentEducator, userID=stuIDs[self.accountIndex]))
+                                break
+                        
+                        if stuCompletions[self.accountIndex] == "NoCompletions":
+                            studentCompletions = None
+                        else:
+                            studentCompletions = stuCompletions[self.accountIndex].split(";")
+                            for i in range(len(studentCompletions)):
+                                studentCompletions[i] = studentCompletions[i].split("-")
+                                studentCompletions[i] = tuple(studentCompletions[i])
+                        self.menu.set_user(Student(stuUsernames[self.accountIndex], stuPasswords[self.accountIndex], stuEmails[self.accountIndex], studentSchool, studentEducator, studentCompletions, userID=stuIDs[self.accountIndex]))
                     
                     # Executed if account is not found
                     else: 
@@ -553,6 +563,7 @@ class Login:
                     key = self.game.pick_module()
                     mcqPoints = self.game.attempt_mcq_quizzes(key)
                     codePoints = self.game.attempt_code_quizzes(key)
+                    self.menu.get_user().new_completion(key, (mcqPoints[0] + codePoints[0]), (mcqPoints[1] + codePoints[1]))
                 
                 ### TODO: **TKINTER** ###
                 ### Education stuff block ###
