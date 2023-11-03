@@ -17,19 +17,15 @@ class ModuleHandler:
         Allows educator to create modules
         :return: None
         """
-        ### TODO: Replace with **TKINTER** stuff ###
-        ### Creation prompt block ###
+
         while True:
-            # REPLACE: with a thing that allows them to type a line
             moduleInput = input("Please enter module name to be created:\n")
 
             # Checking if the thing is blank or "cancel" (cancel cannot be the name of the module)
             if moduleInput is not None or moduleInput == '' and moduleInput != 'cancel':
                 break
             else:
-                # REPLACE: Error, module is nameless msg
                 print("The module must have a name (that is not 'cancel'), please try again.")
-        ## End of creation prompt block ###
 
         # Appending the module name into module.txt
         writeFile = open(self.moduleData, "a", encoding="utf8")
@@ -43,15 +39,13 @@ class ModuleHandler:
         :param moduleKey: A string representing the name of the module to be removed
         :return: None
         """
-        ### TODO: Replace with **TKINTER** stuff ###
-        ### Confirmation prompt block ###
         # While True block to repeat if they put invalid inputs
         while True:
-            # REPLACE: Basically to confirm that they want to delete everything, replace with Y/N buttons probably
+            # Basically to confirm that they want to delete everything
             confirmation = input("\nThis action will remove all associated quizzes along with the module, are you sure? (Y/N):\n").upper()
             if confirmation == "Y":
                 while True:
-                    # REPLACE: Confiming they do want to delete by making them type the module name
+                    # Re-confiming they do want to delete by making them type the module name
                     confirmation = input("\nPlease type in '" + moduleKey + "' to delete the module or 'cancel' to cancel the operation:\n")
                     if confirmation == moduleKey:
                         confirmed = True
@@ -60,13 +54,11 @@ class ModuleHandler:
                         confirmed = False
                         break
                     else:
-                        # REPLACE: Error, input is not Y or N, can be removed if buttons are used
                         print("Invalid input, please try again.")
                 break
             elif confirmation == "N":
                 confirmed = False
                 break
-        ### End of confirmation prompt block ###
 
         if confirmed:
 
@@ -83,12 +75,12 @@ class ModuleHandler:
             overwriteFile.write("\n".join(modules))
             overwriteFile.close()
 
-
+            # Removing from code_quizzes.txt
             readFile = open(self.codeData, "r", encoding="utf8")
             lines = list(readFile)
             readFile.close()
 
-            # Removing from code_quizzes.txt
+            
             modules = []
             questions = []
             initialCodes = []
@@ -111,7 +103,44 @@ class ModuleHandler:
                     answers.pop(i)
                     codeAnswers.pop(i)
             
-            # TODO: Remove from mcq_quizzes.txt
+            
+            overwriteList = []
+            for i in range(len(questions)):
+                overwriteList.append(f"{modules[i]},{questions[i]},{initialCodes[i]},{answers[i]},{codeAnswers[i]}")
+            overwriteFile = open(self.codeData, "w", encoding="utf8")
+            overwriteFile.write("\n".join(overwriteList))
+            overwriteFile.close()
+            
+            # Removing from mcq_quizzes.txt
+            readFile = open(self.mcqData, "r", encoding="utf8")
+            lines = list(readFile)
+            readFile.close()
+
+            modules = []
+            questions = []
+            selections = []
+            answers = []
+
+            for line in lines:
+                (module, question, selection, answer) = line.strip("\n").split(",")
+                modules.append(module)
+                questions.append(question)
+                selections.append(selection)
+                answers.append(answer)
+
+            for i in range(len(questions)):
+                if module[i] == moduleKey:
+                    modules.pop(i)
+                    questions.pop(i)
+                    selections.pop(i)
+                    answers.pop(i)
+
+            overwriteList = []
+            for i in range(len(questions)):
+                overwriteList.append(f"{modules[i]},{questions[i]},{selections[i]},{answers[i]}")
+            overwriteFile = open(self.mcqData, "w", encoding="utf8")
+            overwriteFile.write("\n".join(overwriteList))
+            overwriteFile.close()
         
         else:
             print("\nDeletion cancelled, returning to menu...\n")
@@ -136,15 +165,12 @@ class ModuleHandler:
         :return: None
         """
         while True:
-            # REPLACE: Only uses a line of text to input questions.
             qnsInput = input("Please enter the question to be asked:\n")
 
             # Checking qnsInput
             if qnsInput is None or qnsInput == "":
-                # REPLACE: Error, question is empty
                 print("Question must not be empty.")
             elif "," in qnsInput:
-                # REPLACE: Error, inputs cannot support ","
                 print("All inputs are not able to support commas(,) please retype the question.")
             else:
                 break
@@ -153,16 +179,12 @@ class ModuleHandler:
         hasSelection = False
         while True:
             if hasSelection:
-                # REPLACE: Put in the same window if hasSelection is True
                 print("Type in '--stop--' to submit all selections, or '--remove--' to remove the last selection.")
-            # REPLACE: Only uses a line of text to input questions.
             selInput = input("Please enter a selection option:\n")
             # Checking selInput
             if selInput is None or selInput == "":
-                # REPLACE: Error, selection is empty
                 print("Question must not be empty.")
             elif "," in selInput or ";" in selInput:
-                # REPLACE: Error, selections cannot support "," or ";"
                 print("Selections are not able to support commas(,) or semicolons(;) please retype the question.")
             elif selInput == '--remove--':
                 if len(selectionList > 0):
@@ -170,7 +192,6 @@ class ModuleHandler:
                     if len(selectionList) == 0:
                         hasSelection = False
                 else:
-                    # REPLACE: Error, no selections to remove.
                     print("No selections to remove.")
                     
             elif selInput == '--stop--':
@@ -181,18 +202,14 @@ class ModuleHandler:
                 selectionList.append(selInput)
         
         while True:
-            # REPLACE: Only uses a line of text to input questions.
             ansInput = input("Please enter the answer to the question:\n")
 
             # Checking ansInput
             if ansInput is None or ansInput == "":
-                # REPLACE: Error, answer is empty
                 print("Answer must not be empty.")
             elif "," in qnsInput:
-                # REPLACE: Error, inputs cannot support ","
                 print("All inputs are not able to support commas(,) please retype the question.")
             elif ansInput not in selectionList:
-                # REPLACE: Error, answer not in selection list, rendering question impossible.
                 print(f"Selections: {selectionList}")
                 print("The answer is not in the selection list, please try again.")
             else:
@@ -227,66 +244,57 @@ class ModuleHandler:
             selections.append(selections)
             answers.append(answer)
         
-        ### TODO: Replace with **TKINTER** shenanigans ###
-        ### Selection block ###
+
         indexList = []
         incrementer = 1
         # Providing all options for question removal
         for i in range(len(questions)):
             if module[i] == moduleKey:
-                indexList.append[i]
-                # REPLACE: Basically printing a list of questions and answers in the module, replace this how you'd like in tkinter.
+                indexList.append(i)
                 print(f"[{incrementer}]\nQuestion: {questions[i]}\nAnswer: {answers[i]}\n\n")
                 incrementer += 1
                 
         # Prompting for option to remove
         while True:
             try:
-                # REPLACE: Choosing from the list of questions and answers jn
                 removeInput = int(float(input("Pick an option to remove by number (Pick 0 to return without removing): \n")))
                 if removeInput > len(indexList) or removeInput < 0:
-                    # REPLACE: Selection isn't there, retry
                     print("Invalid selection.") 
                 elif removeInput == 0:
                     break
                 else:
                     removeInput = indexList[removeInput - 1]
+                    modules.pop(removeInput)
                     questions.pop(removeInput)
                     selections.pop(removeInput)
                     answers.pop(removeInput)
                     break
             except ValueError:
-                # REPLACE: Error, selection isn't there, retry
                 print("Invalid option.") 
-
-        ### End of selection block ###
 
         # Overwriting list once the options are removed
         overwriteList = []
         for i in range(len(questions)):
-            overwriteList.append[f"{modules[i]},{questions[i]},{selections[i]},{answers[i]}"]
+            overwriteList.append(f"{modules[i]},{questions[i]},{selections[i]},{answers[i]}")
 
         overwriteFile = open(self.codeData, "w", encoding="utf8")
         overwriteFile.write("\n".join(overwriteList))
+        overwriteFile.close()
 
     def create_code_quiz(self, moduleKey: str):
         """
         Allows educator to create quizzes to be done by students.
         :return: None
         """
-        ### TODO: Replace with **TKINTER** stuff ###
-        ### Creation prompt block ###
+
         # While True block to repeat if invalid inputs have been made
         while True:
-            # REPLACE: Only uses a line of text to input questions.
             qnsInput = input("Please enter the question to be asked:\n")
 
             # Checking qnsInput
             if qnsInput is None or qnsInput == "":
-                # REPLACE: Error, question is empty
                 print("Question must not be empty.")
             elif "," in qnsInput:
-                # REPLACE: Error, questions cannot support ","
                 print("All inputs are not able to support commas(,) please retype the question.")
             else:
                 break
@@ -295,7 +303,6 @@ class ModuleHandler:
         testCases = []
         eduInputs = []
 
-        # REPLACE ALL: Allow for multiline input for this, basically coding style, tabs and all.
         print("Type in your code to complete the initial code(s).\nType in (without quotes):\n'--delete--' to remove the last line\n'--clear--' to clear all lines\n'--next--' to move on to the next initial code test case\n'--finish--' to add this code to the initial code test case and finish\n")
         while True:
                 
@@ -303,8 +310,6 @@ class ModuleHandler:
                 eduInput = input()
 
                 # Checking for special options
-                # NOTE: All of this is probably not needed if they can type in a next box (except for --next--, which allows them to code more test cases.)
-                # NOTE: A 'Submit All' button can be used to replace the --finish-- thing
                 if eduInput == '--delete--':
                     try:
                         eduInputs.pop()
@@ -332,12 +337,10 @@ class ModuleHandler:
         # Creating expected return value for each test case
         # If the test case is "a = 1\nb = 2", and the question is "Return the value of a+b" then the ansInput should be 3
         ansInput = []
-        # REPLACE: Going through all test cases, using a single line of text should suffice
         for i in range(len(testCases)):
             ansInput.append(input("Type in the returned item for this test case:\n " + "\n".join(testCases[i]).split("~~")))
 
         # Providing a piece of code that could be used to solve the question
-        # REPLACE: Same thing as the test cases thing, except this is the solution that works on all the test cases.
         codedAns = []
         print("Type in your code to complete the initial code(s).\nType in (without quotes):\n'--delete--' to remove the last line\n'--clear--' to clear all lines\n'--finish--' to set the coded answer\n")
         while True:
@@ -359,7 +362,6 @@ class ModuleHandler:
 
                 else:
                     codedAns.append(codedInput)
-        ### End of creation prompt block ###
 
 
         # Appends all question data into file
@@ -395,17 +397,16 @@ class ModuleHandler:
             codeAnswers.append(codeAnswer)
 
         
-        ### TODO: Replace with **TKINTER** shenanigans ###
-        ### Selection block ###
+
         indexList = []
         incrementer = 1
         # Providing all options for question removal
         for i in range(len(questions)):
             if module[i] == moduleKey:
-                indexList.append[i]
+                indexList.append(i)
                 codedAns = '\n'.join(codeAnswer[i].split('~~'))
 
-                # REPLACE: Basically printing a list of questions and answers in the module, replace this how you'd like in tkinter.
+                # Basically printing a list of questions and answers in the module
                 print(f"[{incrementer}]\nQuestion: {questions[i]}\n\nAnswer:\n {codedAns}\n\n")
                 incrementer += 1
                 
@@ -413,22 +414,20 @@ class ModuleHandler:
         # Prompting for option to remove
         while True:
             try:
-                # REPLACE: Choosing from the list of questions and answers jn
                 removeInput = int(float(input("Pick an option to remove by number (Pick 0 to return without removing): \n")))
                 if removeInput > len(indexList) or removeInput < 0:
-                    # REPLACE: Selection isn't there, retry
                     print("Invalid selection.") 
                 elif removeInput == 0:
                     break
                 else:
                     removeInput = indexList[removeInput - 1]
+                    modules.pop(removeInput)
                     questions.pop(removeInput)
                     initialCodes.pop(removeInput)
                     answers.pop(removeInput)
                     codeAnswers.pop(removeInput)
                     break
             except ValueError:
-                # REPLACE: Error, selection isn't there, retry
                 print("Invalid option.") 
 
         ### End of selection block ###
@@ -436,9 +435,8 @@ class ModuleHandler:
         # Overwriting list once the options are removed
         overwriteList = []
         for i in range(len(questions)):
-            overwriteList.append[f"{modules[i]},{questions[i]},{initialCodes[i]},{answers[i]},{codeAnswers[i]}"]
+            overwriteList.append(f"{modules[i]},{questions[i]},{initialCodes[i]},{answers[i]},{codeAnswers[i]}")
 
         overwriteFile = open(self.codeData, "w", encoding="utf8")
         overwriteFile.write("\n".join(overwriteList))
-
-    
+        overwriteFile.close()

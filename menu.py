@@ -94,10 +94,8 @@ class Menu:
         :param optionList: A list of strings containing the allowable actions in the given menu
         :return: A string representing the user's chosen option
         """
-        ### TODO: Replace with **TKINTER** stuff ###
-        ### Start of selection block ###
+
         # List of options provided by optionList, it is a list of strings
-        # REPLACE: probably with buttons with all options
         for i in range(len(optionList)):
             print(f"{i+1}) {optionList[i]}")
 
@@ -114,5 +112,4 @@ class Menu:
         # Returns the string that was chosen in the option list
         # i.e. they chose "Log In", it literally just returns the string "Log In"
         return optionList[(userInput - 1)]
-        ### End of selection block ###
 

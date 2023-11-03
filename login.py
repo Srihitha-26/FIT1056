@@ -95,11 +95,8 @@ class Login:
         # Start with a new User instance where each variable can be replaced
         newUser = User("Placeholder","Placeholder","Placeholder@email.nul")
 
-        ### TODO: Replace with **TKINTER** stuff ###
-        ### Base account creation block ###
         # Prompt to set the username of the account
         while True:
-            # REPLACE: with textline
             usernameInput = input("\nPlease enter a username: ")
             if newUser.set_username(usernameInput):
                 if newUser.get_username() not in allUsernames: # Make sure the username does not already exist
@@ -109,26 +106,21 @@ class Login:
 
         # Prompt to set the password of the account
         while True:
-            # REPLACE: with textline which is masked, should give *****
             passwordInput = self.mask_password("\nPlease enter your password: ")
             if newUser.set_password(passwordInput):
                 break
 
         # Prompt to set the email of the account
         while True:
-            # REPLACE: with text line
             emailInput = input("\nPlease enter your email: ")
             if newUser.set_email(emailInput):
                 break
 
         # Regenerate the ID once all base data have been given
         newUser.generate_id(allIDs)
-        ### End of base account creation block ###
 
         # Checking for the account type provided and prompt for additional information
 
-        ### TODO: **TKINTER** yes ####
-        ### Start of specialized prompt block ###
         match accountType:
             case "Investor":
                 # Creating new Investor instance with all previous data
@@ -136,7 +128,6 @@ class Login:
 
                 # Prompt to set shares of the account
                 while True:
-                    # REPLACE: w/ text box or something that takes a number from 1-100 should work
                     sharesInput = input("\nPlease enter the current amount of shares that is held (%): ")
                     if newUser.set_shares(sharesInput):
                         # Append data once completed
@@ -151,7 +142,6 @@ class Login:
                 
                 # Prompt to set school of the account
                 while True:
-                    # REPLACE: w/ text box probably
                     schoolInput = input("\nPlease enter the name of the school that you are teaching at: ")
                     if newUser.set_school(schoolInput):
                         # Append data once completed
@@ -166,13 +156,11 @@ class Login:
 
                 # Prompt to see if the student has a school or educator
                 while True:
-                    # REPLACE: Button with Y/N, checking if the student has a teacher.
                     educationInput = input("\nAre you a student of an educator for this program? (Y/N): ").upper()
                     
                     # If yes, prompt for educator and school
                     if educationInput == "Y":
                         while True: # Educator prompt
-                            # REPLACE: Get name of the educator username, text box probably
                             educatorInput = input("\nPlease enter the username of your educator: ")
                             found = False
                             for i in range(kwargs['edus'][0]): # kwargs['edus'] is a list of all educator data
@@ -184,12 +172,10 @@ class Login:
                             if found:
                                 break
                             else:
-                                # REPLACE: Error, retry.
                                 print("Educator username not found in database.") 
 
                         
                         while True: # School prompt
-                            # REPLACE: Get name of the school, text box probably
                             schoolInput = input("\nPlease enter the name of the school that you are learning at: ")
                             if newUser.set_school(schoolInput):
                                 # Append data once completed
@@ -207,14 +193,11 @@ class Login:
                         break
 
                     else:
-                        # REPLACE: Can probably be removed if a Y/N button is used, since this relies on the reply not being Y nor N
                         print("Invalid Input.")
 
             case _: # Case if somehow no types have matched
-                # REPLACE: Error box if no account type (educator, student, investor) has matched
                 print("No account type matched")
                 return None
-        ### End of specialized creation block ###
 
         # Returns newUser instance once account is made
         return newUser
@@ -262,12 +245,9 @@ class Login:
             return False  # User not found
 
 
-    ### TODO: ?***TKINTER***? ###
-    # This function masks the password, not sure if it can be replaced since this is terminal based
-    ### Mask password block ###
     def mask_password(self, prompt: str ="Please enter your password: ") -> str:
         """
-        Prompt for a password and masks the input.
+        Prompt for a password and masks the input with stars (*).
         :param prompt: A string working as a prompt for the user similar to input() 
         :return: A string entered by the user.
         """
@@ -298,7 +278,6 @@ class Login:
                     sys.stdout.flush()                
                     pwd = pwd + char
 
-    ### End of mask password block ###
     
     """
     Main login method for users to interact with the menu andd browse around CodeVenture
@@ -413,10 +392,7 @@ class Login:
             # Match each selection to each case to run the corresponding functions
             match selectedOption:
 
-                ### TODO: **TKINTER** ###
-                ### Login block ###
                 case "Log In": # User decides to log in
-                    # REPLACE: Username and password input (mask pw)
                     usernameInput = input("\nPlease enter your username: ")
                     passwordInput = self.mask_password("\nPlease enter your password: ")
                 
@@ -450,10 +426,8 @@ class Login:
                     
                     # Executed if account is not found
                     else: 
-                        # REPLACE: Error, account not found
                         print("Invalid account username or password, returning to menu.")
 
-                ### End of login block ###
 
                 case "Create Account": # User decides to make an account
                     typeOption = self.menu.option_select(self.menu.create_account_type_menu(User.availableTypes))
@@ -467,8 +441,6 @@ class Login:
                 case "View Shares": # Investor decides to view shares
                     print(f"Shares: {self.menu.get_user().get_shares()}%")
 
-                ### TODO: **TKINTER** ###
-                ### Buying/Selling shares block ###
                 case "Buy Shares": # Investor decides to buy shares
                     print(f"Current Shares: {self.menu.get_user().get_shares()}%")
 
@@ -476,24 +448,19 @@ class Login:
                     # Prompt for shares input
                     while True:
                         try:
-                            # REPLACE: Getting a float number input
                             sharesInput = float(input("\nPlease enter the percentage(%) of shares to buy: "))
                         except ValueError:
-                            # REPLACE: Error, not a number, or can just remove if there is a number input
                             print("Invalid amount of shares.")
                         
                         # Checking if the bought shares exceeds threshold or is negative.
                         if sharesInput > (100 - self.menu.get_user().get_shares()):
-                            # REPLACE: Error, too many shares
                             print("Owned shares cannot surpass 100%")
                         elif sharesInput < 0:
-                            # REPLACE: Error, negative shares
                             print("Cannot buy negative shares")
 
                         # If shares is valid, it is bought
                         else:
                             self.menu.get_user().set_shares(sharesInput + self.menu.get_user().get_shares())
-                            # REPLACE: Success!
                             print(f"Bought {sharesInput}% of shares.")
                             break
 
@@ -503,43 +470,34 @@ class Login:
                     # Prompt for shares input
                     while True:
                         try:
-                            # REPLACE: Getting a float number input
                             sharesInput = float(input("\nPlease enter the percentage(%) of shares to sell: "))
                         except ValueError:
-                            # REPLACE: Error, not a number, or can just remove if there is a number input
                             print("Invalid amount of shares.")
                         
                         # Checking if the sold shares exceeds threshold or is negative.
                         if sharesInput > self.menu.get_user().get_shares():
-                            # REPLACE: Error, too many shares
                             print("Sold shares cannot surpass owned shares.")
                         elif sharesInput < 0:
-                            # REPLACE: Error, negative shares
                             print("Cannot sell negative shares")
                             
                         # If shares is valid, it is sold
                         else:
                             self.menu.get_user().set_shares(self.menu.get_user().get_shares() - sharesInput)
-                            # REPLACE: Success!
                             print(f"Sold {sharesInput}% of shares.")
                             break
 
-                ### End of buying/selling shares block ###
 
                 case "Set New Working Times": # Developer decides to change working times
-                    ### TODO: **TKINTER** ###
-                    ### Working times block ###
 
-                    # REPLACE: printing current working times
+                    # Printing current working times
                     print(f"Current working times: {self.menu.get_user().get_times()[0]} - {self.menu.get_user().get_times()[1]}")
 
-                    # REPLACE: Prompt for new working times
+                    # Prompt for new working times
                     while True:
                         startInput = input("Set new starting time (HH:MM): ")
                         endInput = input("Set new ending time (HH:MM): ")
                         if self.menu.get_user().set_times([startInput, endInput]): # Checking if times are set
                             break
-                    ### End of working times block ###
 
                 case "View Feedback": # Developer decides to view all feedback
                     self.feedback.read()
@@ -565,17 +523,16 @@ class Login:
                     codePoints = self.game.attempt_code_quizzes(key)
                     self.menu.get_user().new_completion(key, (mcqPoints[0] + codePoints[0]), (mcqPoints[1] + codePoints[1]))
                 
-                ### TODO: **TKINTER** ###
-                ### Education stuff block ###
+
                 case "Change Associated School": # Educator/Student decides to change school names
-                    # REPLACE: Prompt for new school input
+                    # Prompt for new school input
                     while True:
                         schoolInput = input("Please enter the new school name: ")
                         if self.menu.get_user().set_school(schoolInput):
                             break
 
                 case "Set Educator": # Student decides to set new educator
-                    # REPLACE: Prompt for educator username
+                    # Prompt for educator username
                     while True:
                         educatorInput = input("\nPlease enter the username of your educator: ")
                         found = False
@@ -590,24 +547,20 @@ class Login:
 
                         # Executed if educator username is not found in database
                         else:
-                            # REPLACE: Error, educator not found
                             print("Educator not found.")
-                ### End of education stuff block ###
 
                 case "Provide Feedback": # User wishes to provide feedback
                     self.feedback.write()
 
                 case "View Profile": # User decides to view their profile
-                    ### TODO: **TKINTER NO BLOCK** ###
-                    # REPLACE: Printing the entire user profile, they have a __str__ function.
+                    # Printing the entire user profile with the __str__ function
                     print(str(self.menu.get_user()))
                 
-                ### TODO: **TKINTER** ###
-                ### Change pass block ###
+
                 case "Change Password": # User decides to change their password
                     tries = 0
                     passed = False
-                    # REPLACE: Prompt for old password (masked)
+                    # Prompt for old password (masked)
                     while True:
                         oldPass = self.mask_password("Please enter the current password: ")
                         if oldPass == self.menu.get_user().get_password():
@@ -615,28 +568,23 @@ class Login:
                             break
                         else:
                             tries += 1
-                            # REPLACE: Error, retry
                             print("Password is incorrect")
                             if tries > 2: # Executed if too many tries are done
-                                # REPLACE: Error, return to menu
                                 print("Tries exceeded, returning to menu.")
                                 break
                     
                     # If correct password is entered, prompt to set a new password
                     while passed:
-                        # REPLACE: Prompt for new pass (masked)
+                        # Prompt for new pass (masked)
                         newPass = self.mask_password("Please enter the new password: ")
                         if self.menu.get_user().set_password(newPass): # Prompt to enter new password again to confirm
-                            # REPLACE: Prompt for re-entering new pass (masked)
                             confirmPass = self.mask_password("Please re-enter the new password: ")
                             if self.menu.get_user().get_password() == confirmPass:
-                                # REPLACE: Success!
                                 print("New password set.")
                                 break
                             else: 
-                                # REPLACE: Return to entering a new password if the confirm password does not match
+                                # Return to entering a new password if the confirm password does not match
                                 print("Re-entered password does not match the new password.")
-                ### End of change pass block ###
                 
                 case "Log Out": # User chooses to log out
                     print("Saving data.") # Saves all data that may be changed during use
@@ -671,24 +619,23 @@ class Login:
                         file.writelines(new_lines)
                         file.close()
 
-                    ### TODO: **TKINTER NO BLOCK** ###
-                    # REPLACE: Once all data is saved, log out.
+                    # Once all data is saved, log out.
                     print("Logging out.") 
                     self.menu.set_user(None)
 
                 case "Delete Account": # User chooses to delete their own account
                     while True:
-                        # REPLACE: Prompt for confirmation
+                        # Prompt for confirmation
                         confirmInput = input("Confirm account deletion? (Y/N): ").upper()
                         if confirmInput == "Y":
                             self.delete_account(self.menu.get_user()) # Account is deleted if Y is inputted
                             self.menu.set_user(None)
                             break
                         elif confirmInput == "N":
-                            # REPLACE: Printing deletion is cancelled
+                            # Printing deletion is cancelled
                             print("Deletion cancelled, returning to menu.")
                             break
                         else:
-                            # REPLACE: Error, input is not Y or N, can remove if buttons are used
+                            # Error, input is not Y or N, can remove if buttons are used
                             print("Invalid input.")
                     

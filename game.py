@@ -8,12 +8,11 @@ Group: MA_FRI_1600_G2
 
 import os
 from menu import Menu
-"""
-The Game class represents the CodeVenture quizzes to be made, deleted, or played.
-"""
+
 class Game:
-    ### TODO: **TKINTER NO BLOCK** ###
-    # Replacing should be similar to modulehandler
+    """
+    The Game class represents the CodeVenture quizzes to be made, deleted, or played.
+    """
     
     baseFile = os.path.dirname(os.path.realpath('__file__'))
     """

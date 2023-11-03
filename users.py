@@ -14,8 +14,6 @@ class User():
     """
     The User class represents all users that are able to use the CodeVenture program
     """
-    ### TODO: **TKINTER NO BLOCK**
-    # REPLACE: all set_ functions with the necessary prompts and errors
     
     typeList = ["DEV", "INV", "EDU", "STU"]
     """
