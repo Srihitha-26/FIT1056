@@ -490,14 +490,17 @@ class Student(User):
         :return: A boolean representing if the new completions were added successfully
         """
         moduleExists = False
-        for i in range(len(self.completions)):
-            if moduleKey == self.completions[i][0]:
-                moduleExists = True
-                if self.completions[i][1] == total:
-                    if self.completions[i][2] < cleared:
-                        self.completions[i] = (moduleKey, total, cleared)
-                        return True
-                break
+        if self.completions is not None:
+            for i in range(len(self.completions)):
+                if moduleKey == self.completions[i][0]:
+                    moduleExists = True
+                    if self.completions[i][1] == total:
+                        if self.completions[i][2] < cleared:
+                            self.completions[i] = (moduleKey, total, cleared)
+                            return True
+                    break
+        else:
+            self.completions = []
         
         if not moduleExists:
             self.completions.append((moduleKey, total, cleared))
@@ -537,9 +540,9 @@ class Student(User):
         if not (self.educator == None):
             ret += f"\nEducator: {self.get_educator().get_username()}"
         if not (self.completions == None):
-            ret += f"\nCompletions:\n" + "\n".join([f"{i[0]}: {i[1]}/{i[2]}" for i in self.completions])
+            ret += f"\nCompletions:\n" + "\n".join([f"{i[0]}: {i[2]}/{i[1]} questions passed." for i in self.completions]) + "\n"
         else:
-            ret += f"\nCompletions:\nNone"
+            ret += f"\nCompletions:\nNone\n"
         return ret
     
     

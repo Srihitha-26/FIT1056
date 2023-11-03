@@ -265,7 +265,7 @@ class Login:
     ### TODO: ?***TKINTER***? ###
     # This function masks the password, not sure if it can be replaced since this is terminal based
     ### Mask password block ###
-    def mask_password(prompt: str ="Please enter your password: ") -> str:
+    def mask_password(self, prompt: str ="Please enter your password: ") -> str:
         """
         Prompt for a password and masks the input.
         :param prompt: A string working as a prompt for the user similar to input() 
@@ -408,7 +408,7 @@ class Login:
         # While true loop to keep the program running
         while True:
             # Print and get the option selected from the main menu
-            selectedOption = self.menu.option_select(self.menu.main_menu())
+            selectedOption = Menu.option_select(self.menu.main_menu())
 
             # Match each selection to each case to run the corresponding functions
             match selectedOption:

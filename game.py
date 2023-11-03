@@ -81,7 +81,7 @@ class Game:
 
                 incrementer += 1
                 print(f"\n================================ Question {incrementer} ================================")
-                print(question[i])
+                print(questions[i])
                 print("================================ Select One ================================")
                 ch = 'A' # Note: ord('A') is 65
                 for options in allOptions:
@@ -90,8 +90,8 @@ class Game:
                 while True:
                     chosenInput = input("\n").upper()
                     try:
-                        index = ord(chosenInput - 65)
-                        if index < 0 or (index + len(allOptions)) > len(allOptions):
+                        index = ord(chosenInput) - 65
+                        if index < 0 or (index) > (len(allOptions) - 1):
                             print("Input is invalid, please select a valid option.")
                         else:
                             break
